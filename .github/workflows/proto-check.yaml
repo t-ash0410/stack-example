@@ -7,7 +7,7 @@ on:
       - protodef/**
 
 jobs:
-  ci:
+  check:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
