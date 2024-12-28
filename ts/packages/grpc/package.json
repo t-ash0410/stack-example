@@ -1,0 +1,13 @@
+{
+  "name": "@stack-example/grpc",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^1.10.0"
+  }
+}
