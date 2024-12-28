@@ -30,7 +30,7 @@ Dev Containersは以下の方法でコンテナを設定可能である。
 
 `dockerComposeFile`が指定されている場合に必須。docker-composeファイル内のどのサービスを開発用コンテナとして扱うのかを指定する。
 
-当然だがdocker-composeファイル内に実在するサービス名を指定しなければならない。
+docker-composeファイル内に実在するサービス名を指定しなければならない。
 
 ### `customizations.vscode.settings`
 
@@ -76,4 +76,3 @@ onCreateCommandとpostStartCommandはその一種で、それぞれ以下役割�
 Dev Containersを使って開発環境をセットアップした段階で、ストレスなく開発に着手できるように以下を行っている。
 
 - 各パッケージにおける依存関係のインストール
-- DBに初期値を注入
