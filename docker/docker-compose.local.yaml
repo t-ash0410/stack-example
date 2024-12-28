@@ -1,0 +1,21 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/base:debian
+    command: sleep infinity
+    volumes:
+      - ../:/workspace
+    working_dir: /workspace
+  firestore:
+    image: mtlynch/firestore-emulator
+    environment:
+      - FIRESTORE_PROJECT_ID=dummy-project-id
+      - PORT=8200
+    ports: 
+      - 18200:8200
+  firestore-test:
+    image: mtlynch/firestore-emulator
+    environment:
+      - FIRESTORE_PROJECT_ID=dummy-project-id
+      - PORT=8200
+    ports: 
+      - 18201:8200
