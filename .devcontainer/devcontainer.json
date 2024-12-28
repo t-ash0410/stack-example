@@ -1,0 +1,90 @@
+{
+  "name": "stack-example",
+  "dockerComposeFile": "../docker/docker-compose.local.yaml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Editor
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.codeActionsOnSave": {
+          "quickfix.biome": "explicit",
+          "source.organizeImports.biome": "explicit"
+        },
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml"
+        },
+        "[go]": {
+          "editor.defaultFormatter": "golang.go",
+          "editor.insertSpaces": false,
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+          }
+        },
+        "files.insertFinalNewline": true,
+        // Buf
+        "buf.binaryPath": "/workspace/protodef/node_modules/@bufbuild/buf-linux-x64/bin/buf"
+      },
+      "extensions": [
+        // TypeScript
+        "ms-vscode.vscode-typescript-next",
+        // Next
+        "foxundermoon.next-js",
+        // Tailwind
+        "bradlc.vscode-tailwindcss",
+        // biome
+        "biomejs.biome",
+        // gRPC
+        "bufbuild.vscode-buf",
+        "zxh404.vscode-proto3",
+        // Go
+        "golang.go",
+        // Git
+        "GitHub.vscode-pull-request-github",
+        // Markdown
+        "DavidAnson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one",
+        // Toml
+        "tamasfe.even-better-toml",
+        // Util
+        "streetsidesoftware.code-spell-checker",
+        "oderwat.indent-rainbow",
+        "Equinusocio.vsc-material-theme",
+        "PKief.material-icon-theme"
+      ]
+    }
+  },
+  "containerEnv": {
+    "SHELL": "/bin/zsh",
+    // For download npm packages
+    "GITHUB_PACKAGES_NPM_READ_AUTH_TOKEN": "${localEnv:GITHUB_PACKAGES_NPM_READ_AUTH_TOKEN}",
+    // Backend application settings
+    "HOST": "0.0.0.0",
+    "PORT": "8080",
+    "DB_HOST": "firestore",
+    "DB_PORT": "8200",
+    "ALLOW_ORIGIN": "http://localhost:3000",
+    "FIRESTORE_EMULATOR_HOST": "firestore:8200",
+    "FIRESTORE_PROJECT_ID": "dummy-project-id"
+  },
+  "forwardPorts": [
+    3300
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "latest"
+    },
+    "ghcr.io/shyim/devcontainers-features/bun:0": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  },
+  "onCreateCommand": ".devcontainer/on-create.sh",
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
+}
