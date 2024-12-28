@@ -27,7 +27,7 @@
         },
         "files.insertFinalNewline": true,
         // Buf
-        "buf.binaryPath": "/workspace/protodef/node_modules/@bufbuild/buf-linux-x64/bin/buf"
+        "buf.binaryPath": "/usr/local/bin/buf"
       },
       "extensions": [
         // TypeScript
@@ -82,6 +82,9 @@
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    },
+    "ghcr.io/marcozac/devcontainer-features/buf:1": {
       "version": "latest"
     }
   },

@@ -1,0 +1,23 @@
+name: Check Proto
+
+on: 
+  pull_request: 
+    paths: 
+      - .github/workflows/proto-check.yaml
+      - protodef/**
+
+jobs:
+  check:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+      - uses: bufbuild/buf-lint-action@v1
+        with:
+          input: protodef
