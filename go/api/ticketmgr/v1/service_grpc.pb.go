@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: todomgr/v1/service.proto
+// source: ticketmgr/v1/service.proto
 
-package todomgrv1
+package ticketmgrv1
 
 import (
 	context "context"
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TicketMgrService_CreateTicket_FullMethodName = "/todomgr.v1.TicketMgrService/CreateTicket"
-	TicketMgrService_UpdateTicket_FullMethodName = "/todomgr.v1.TicketMgrService/UpdateTicket"
-	TicketMgrService_DeleteTicket_FullMethodName = "/todomgr.v1.TicketMgrService/DeleteTicket"
+	TicketMgrService_CreateTicket_FullMethodName = "/ticketmgr.v1.TicketMgrService/CreateTicket"
+	TicketMgrService_UpdateTicket_FullMethodName = "/ticketmgr.v1.TicketMgrService/UpdateTicket"
+	TicketMgrService_DeleteTicket_FullMethodName = "/ticketmgr.v1.TicketMgrService/DeleteTicket"
 )
 
 // TicketMgrServiceClient is the client API for TicketMgrService service.
@@ -176,7 +176,7 @@ func _TicketMgrService_DeleteTicket_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TicketMgrService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "todomgr.v1.TicketMgrService",
+	ServiceName: "ticketmgr.v1.TicketMgrService",
 	HandlerType: (*TicketMgrServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -193,5 +193,5 @@ var TicketMgrService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "todomgr/v1/service.proto",
+	Metadata: "ticketmgr/v1/service.proto",
 }

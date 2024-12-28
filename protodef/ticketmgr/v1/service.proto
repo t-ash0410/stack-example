@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package todomgr.v1;
+package ticketmgr.v1;
 
 import "google/protobuf/timestamp.proto";
 
