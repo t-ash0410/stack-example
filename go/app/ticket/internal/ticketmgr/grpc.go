@@ -47,6 +47,7 @@ func newTicketFromCreateReq(req *ticketmgrv1.CreateTicketRequest) (*firestorex.T
 			Title:       req.Title,
 			CreatedBy:   req.RequestedBy,
 			CreatedAt:   now,
+			UpdatedBy:   req.RequestedBy,
 			UpdatedAt:   now,
 			Description: req.Description,
 			Deadline:    req.Deadline.AsTime(),
