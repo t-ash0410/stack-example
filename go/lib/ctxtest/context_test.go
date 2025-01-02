@@ -1,4 +1,4 @@
-package testctx_test
+package ctxtest_test
 
 import (
 	"context"
@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/t-ash0410/stack-example/go/lib/testctx"
+	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 )
 
 func TestCanceledContext(t *testing.T) {
-	ctx := testctx.CanceledContext()
+	ctx := ctxtest.CanceledContext()
 	assert.EqualError(t, ctx.Err(), context.Canceled.Error())
 }
