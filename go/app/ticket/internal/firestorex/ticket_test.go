@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/firestorex"
 )
@@ -29,10 +30,7 @@ func TestTicket_Validate(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		t.Parallel()
-
-		if err := baseTicket.Validate(); err != nil {
-			t.Errorf("Unexpected error occurred: %v", err)
-		}
+		assert.Nil(t, baseTicket.Validate())
 	})
 
 	t.Run("Fail", func(t *testing.T) {
@@ -44,9 +42,7 @@ func TestTicket_Validate(t *testing.T) {
 			CreatedBy:   "", // important
 			Description: "", // important
 		}
-		if err := invalid.Validate(); err == nil {
-			t.Errorf("Expected error, but returned nil")
-		}
+		assert.NotNil(t, invalid.Validate())
 	})
 }
 
