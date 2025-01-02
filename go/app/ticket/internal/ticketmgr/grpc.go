@@ -2,7 +2,6 @@ package ticketmgr
 
 import (
 	"context"
-	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
@@ -31,7 +30,7 @@ func (s *TicketMgrServer) CreateTicket(ctx context.Context,
 		return tx.Create(s.fsc.Doc(t.Path()), t)
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to create a document: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to create ticket: %v", err)
 	}
 
 	return &ticketmgrv1.CreateTicketResponse{
@@ -41,14 +40,11 @@ func (s *TicketMgrServer) CreateTicket(ctx context.Context,
 
 func newTicketFromCreateReq(req *ticketmgrv1.CreateTicketRequest) (*firestorex.Ticket, error) {
 	var (
-		now = time.Now()
-		t   = &firestorex.Ticket{
+		t = &firestorex.Ticket{
 			TicketID:    uuid.NewString(),
 			Title:       req.Title,
 			CreatedBy:   req.RequestedBy,
-			CreatedAt:   now,
 			UpdatedBy:   req.RequestedBy,
-			UpdatedAt:   now,
 			Description: req.Description,
 			Deadline:    req.Deadline.AsTime(),
 		}
