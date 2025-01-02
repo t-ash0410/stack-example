@@ -9,26 +9,25 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func InitFirestoreClient(collections ...string) (*firestore.Client, error) {
-	ctx := context.Background()
-
+func InitFirestoreClient(ctx context.Context, collections ...string) (*firestore.Client, error) {
 	fsc, err := firestore.NewClient(ctx, os.Getenv("FIRESTORE_PROJECT_ID"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create firestore client: %w", err)
 	}
 
+	bw := fsc.BulkWriter(ctx)
 	for _, c := range collections {
-		if err := removeAllDocs(ctx, fsc, c); err != nil {
+		if err := enqRemoveAllDocs(ctx, bw, fsc, c); err != nil {
 			return nil, fmt.Errorf("failed to remove all documents, collection = %s: %w", c, err)
 		}
 	}
+	bw.End()
 
 	return fsc, nil
 }
 
-func removeAllDocs(ctx context.Context, fsc *firestore.Client, c string) error {
-	bw := fsc.BulkWriter(ctx)
-	iter := fsc.Collection(c).Documents(ctx)
+func enqRemoveAllDocs(ctx context.Context, bw *firestore.BulkWriter, fsc *firestore.Client, col string) error {
+	iter := fsc.Collection(col).Documents(ctx)
 	defer iter.Stop()
 	for {
 		doc, err := iter.Next()
@@ -42,6 +41,5 @@ func removeAllDocs(ctx context.Context, fsc *firestore.Client, c string) error {
 			return err
 		}
 	}
-	bw.End()
 	return nil
 }

@@ -12,14 +12,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
 )
 
-type DummyData struct {
-	ID string `firestore:"ID"`
-}
-
 func TestInitFirestoreClient(t *testing.T) {
+	type DummyData struct {
+		ID string `firestore:"ID"`
+	}
+
 	t.Run("Success", func(t *testing.T) {
 		ctx := context.Background()
 
@@ -41,7 +42,7 @@ func TestInitFirestoreClient(t *testing.T) {
 		}
 		bw.End()
 
-		fsc, err = firestoretest.InitFirestoreClient(c)
+		fsc, err = firestoretest.InitFirestoreClient(ctx, c)
 		if err != nil {
 			t.Errorf("Unexpected error occurred: %v", err)
 			return
@@ -54,6 +55,11 @@ func TestInitFirestoreClient(t *testing.T) {
 		}
 	})
 
+	t.Run("Fail: Cancelled context", func(t *testing.T) {
+		_, err := firestoretest.InitFirestoreClient(ctxtest.CanceledContext(), "dummy")
+		assert.ErrorContains(t, err, "failed to remove all documents")
+	})
+
 	t.Run("Fail: Empty project id", func(t *testing.T) {
 		var (
 			envKey = "FIRESTORE_PROJECT_ID"
@@ -64,7 +70,7 @@ func TestInitFirestoreClient(t *testing.T) {
 			os.Setenv(envKey, pid)
 		})
 
-		_, err := firestoretest.InitFirestoreClient("dummy")
+		_, err := firestoretest.InitFirestoreClient(context.Background(), "dummy")
 		assert.ErrorContains(t, err, "failed to create firestore client")
 	})
 }
