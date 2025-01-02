@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
+const CollectionNameTickets = "tickets"
+
 type Ticket struct {
 	TicketID    string    `firestore:"TicketID" validate:"required,uuid"`
 	Title       string    `firestore:"Title" validate:"required"`
 	CreatedBy   string    `firestore:"CreatedBy" validate:"required,uuid"`
-	CreatedAt   time.Time `firestore:"CreatedAt" validate:"required"`
 	UpdatedBy   string    `firestore:"UpdatedBy" validate:"required,uuid"`
-	UpdatedAt   time.Time `firestore:"UpdatedAt" validate:"required"`
 	Description string    `firestore:"Description" validate:"required"`
 	Deadline    time.Time `firestore:"Deadline" validate:"required"`
 }
