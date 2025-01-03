@@ -2,7 +2,7 @@
 
 ## gRPC call example
 
-**Create ticket**
+Create ticket
 
 ```zsh
 buf curl --http2-prior-knowledge --protocol grpc \
