@@ -46,24 +46,45 @@ jobs:
           docker pull ${{ matrix.firestore-image }}
           docker save --output ${{ matrix.docker-cache-path }}/firestore.tar ${{ matrix.firestore-image }}
       
-      # Run mock services
-      - run: docker compose -f ../docker/docker-compose.ci.yaml up -d
+      - name: Run mock services
+        run: docker compose -f ../docker/docker-compose.ci.yaml up -d
       
-      # Setup Go
+      # Setup go
       - uses: actions/setup-go@v5
         with:
           go-version-file: go/go.mod
-          cache: true
-          cache-dependency-path: go
+          cache: false
+      - name: Restore go cache
+        uses: actions/cache/restore@v4
+        id: restore-go-cache
+        with:
+          path: |
+            ~/go/mod
+            ~/.cache/go-build
+          key: go-cache-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+          restore-keys: |
+            go-cache-${{ runner.os }}-${{ runner.arch }}-
+            go-cache-${{ runner.os }}-
 
-      # Run
-      - name: Generate test coverage
-        run: go test ./... -coverprofile=cover.out -covermode=atomic
+      # Main
+      - name: Build
+        run: go build ./...
+      - name: Test
+        run: |
+          go test ./... -coverprofile=cover.out -covermode=atomic
+          
+          # See https://github.com/vladopajic/go-test-coverage/issues/66
+          go install github.com/vladopajic/go-test-coverage/v2@latest
+          $(go env GOPATH)/bin/go-test-coverage -c .testcoverage.yaml
         env:
           FIRESTORE_EMULATOR_HOST: localhost:8200
           FIRESTORE_PROJECT_ID: dummy-project-id
-      - name: Check test coverage
-        # See https://github.com/vladopajic/go-test-coverage/issues/66
-        run: |
-          go install github.com/vladopajic/go-test-coverage/v2@latest
-          $(go env GOPATH)/bin/go-test-coverage -c .testcoverage.yaml
+
+      - name: Save go cache
+        uses: actions/cache/save@v3
+        if: github.ref_name == 'main' && steps.restore-go-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ~/go/mod
+            ~/.cache/go-build
+          key: ${{ steps.restore-go-cache.cache-primary-key }}
