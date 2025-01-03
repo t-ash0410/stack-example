@@ -62,6 +62,8 @@ jobs:
           FIRESTORE_PROJECT_ID: dummy-project-id
       - name: Check test coverage
         uses: vladopajic/go-test-coverage@v2
+        # See https://github.com/vladopajic/go-test-coverage/issues/66
+        run: go run github.com/vladopajic/go-test-coverage/v2 -c .testcoverage.yaml
         with:
           working-directory: go
           config: .testcoverage.yaml
