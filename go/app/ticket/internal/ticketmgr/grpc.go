@@ -104,3 +104,23 @@ func updateTicketByUpdateReq(t *firestorex.Ticket, req *ticketmgrv1.UpdateTicket
 
 	return t.Validate()
 }
+
+func (s *TicketMgrServer) DeleteTicket(ctx context.Context,
+	req *ticketmgrv1.DeleteTicketRequest,
+) (*ticketmgrv1.DeleteTicketResponse, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
+	ref := s.fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, req.TicketId))
+	err := s.fsc.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		return tx.Delete(ref)
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete ticket, ticket id = %q: %v", req.TicketId, err)
+	}
+
+	return &ticketmgrv1.DeleteTicketResponse{}, nil
+}

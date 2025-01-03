@@ -23,10 +23,21 @@ import (
 	"github.com/t-ash0410/stack-example/go/lib/ptr"
 )
 
+var (
+	t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
+
+	baseTicket = &firestorex.Ticket{
+		TicketID:    "083c61da-b38d-4a8c-9c2d-f7ff466678b5",
+		Title:       "Some Ticket",
+		CreatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
+		UpdatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
+		Description: "Some ticket description.",
+		Deadline:    t2024_12_29_UTC,
+	}
+)
+
 func TestServer_CreateTicket(t *testing.T) {
 	var (
-		t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
-
 		baseReq = &ticketmgrv1.CreateTicketRequest{
 			Title:       "Some Ticket",
 			RequestedBy: "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
@@ -132,7 +143,7 @@ func TestServer_CreateTicket(t *testing.T) {
 		}
 	})
 
-	t.Run("Fail: Use nested transaction", func(t *testing.T) {
+	t.Run("Edge case: Use nested transaction", func(t *testing.T) {
 		fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
 		if err != nil {
 			t.Fatalf("Failed to init firestore client: %v", err)
@@ -152,19 +163,6 @@ func TestServer_CreateTicket(t *testing.T) {
 }
 
 func TestServer_UpdateTicket(t *testing.T) {
-	var (
-		t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
-
-		baseTicket = &firestorex.Ticket{
-			TicketID:    "083c61da-b38d-4a8c-9c2d-f7ff466678b5",
-			Title:       "Some Ticket",
-			CreatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
-			UpdatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
-			Description: "Some ticket description.",
-			Deadline:    t2024_12_29_UTC,
-		}
-	)
-
 	t.Run("Success", func(t *testing.T) {
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
@@ -226,11 +224,12 @@ func TestServer_UpdateTicket(t *testing.T) {
 				}
 				if diff := cmp.Diff(tc.want, res, protocmp.Transform()); diff != "" {
 					t.Errorf("Response didn't match (-want / +got)\n%s", diff)
+					return
 				}
-
-				d := readTicket(t, fsc, baseTicket.TicketID)
+				d := readTicket(t, fsc, tc.req.TicketId)
 				if diff := cmp.Diff(tc.wantTicket, d); diff != "" {
 					t.Errorf("Stored data didn't match (-want / +got)\n%s", diff)
+					return
 				}
 			})
 		}
@@ -329,6 +328,120 @@ func TestServer_UpdateTicket(t *testing.T) {
 				tc.wantErr(t, err)
 			})
 		}
+	})
+}
+
+func TestServer_DeleteTicket(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		cases := map[string]struct {
+			setupFirestore func(*firestore.Client) error
+
+			req *ticketmgrv1.DeleteTicketRequest
+
+			want *ticketmgrv1.DeleteTicketResponse
+		}{
+			"Delete a some ticket": {
+				setupFirestore: func(c *firestore.Client) error {
+					var (
+						bw  = c.BulkWriter(context.Background())
+						ref = c.Doc(baseTicket.Path())
+					)
+					if _, err := bw.Create(ref, baseTicket); err != nil {
+						return err
+					}
+					bw.End()
+					return nil
+				},
+				req: &ticketmgrv1.DeleteTicketRequest{
+					TicketId: baseTicket.TicketID,
+				},
+				want: &ticketmgrv1.DeleteTicketResponse{},
+			},
+		}
+		for name, tc := range cases {
+			t.Run(name, func(t *testing.T) {
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				if err != nil {
+					t.Fatalf("Failed to init firestore client: %v", err)
+				}
+
+				if err := tc.setupFirestore(fsc); err != nil {
+					t.Fatalf("Failed to setup firestore: %v", err)
+				}
+
+				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				if err != nil {
+					t.Fatalf("Failed to create server: %v", err)
+				}
+
+				res, err := s.DeleteTicket(context.Background(), tc.req)
+				if !assert.Nil(t, err) {
+					return
+				}
+				if diff := cmp.Diff(tc.want, res, protocmp.Transform()); diff != "" {
+					t.Errorf("Response didn't match (-want / +got)\n%s", diff)
+					return
+				}
+				_, err = fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, tc.req.TicketId)).Get(context.Background())
+				if !assert.ErrorContains(t, err, status.Errorf(codes.NotFound, "").Error()) {
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("Fail", func(t *testing.T) {
+		cases := map[string]struct {
+			ctx context.Context // optional
+			req *ticketmgrv1.DeleteTicketRequest
+
+			wantErr assert.ErrorAssertionFunc
+		}{
+			"Context cancelled": {
+				ctx: ctxtest.CanceledContext(),
+				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
+					return assert.EqualError(t, err, context.Canceled.Error())
+				},
+			},
+		}
+		for name, tc := range cases {
+			t.Run(name, func(t *testing.T) {
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				if err != nil {
+					t.Fatalf("Failed to init firestore client: %v", err)
+				}
+
+				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				if err != nil {
+					t.Fatalf("Failed to create server: %v", err)
+				}
+
+				ctx := context.Background()
+				if tc.ctx != nil {
+					ctx = tc.ctx
+				}
+				_, err = s.DeleteTicket(ctx, tc.req)
+				tc.wantErr(t, err)
+			})
+		}
+	})
+
+	t.Run("Edge case: Use nested transaction", func(t *testing.T) {
+		fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+		if err != nil {
+			t.Fatalf("Failed to init firestore client: %v", err)
+		}
+
+		s, err := ticketmgr.NewTicketMgrServer(fsc)
+		if err != nil {
+			t.Fatalf("Failed to create server: %v", err)
+		}
+
+		fsc.RunTransaction(context.Background(), func(ctx context.Context, _ *firestore.Transaction) error {
+			_, err = s.DeleteTicket(ctx, &ticketmgrv1.DeleteTicketRequest{})
+			return nil
+		})
+		assert.ErrorContains(t, err, status.Errorf(codes.Internal, "failed to delete ticket").Error())
 	})
 }
 
