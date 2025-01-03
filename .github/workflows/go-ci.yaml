@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        docker-cache-path: [/tmp/docker-img-arch]
+        firestore-image: ["mtlynch/firestore-emulator"]
     defaults:
       run:
         working-directory: ./go
@@ -20,12 +22,39 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
+      # Setup firestore
+      - name: Cache firestore image
+        id: firestore-image-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.docker-cache-path }}
+          key: ${{ hashFiles('./docker/docker-compose.ci.yaml') }}
+      - name: Load firestore image if exists
+        if: steps.firestore-image-cache.outputs.cache-hit == 'true'
+        run: docker load --input ${{ matrix.docker-cache-path }}/firestore.tar
+      - name: Build firestore image and save
+        if: steps.firestore-image-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ matrix.docker-cache-path }}
+          docker pull ${{ matrix.firestore-image }}
+          docker save --output ${{ matrix.docker-cache-path }}/firestore.tar ${{ matrix.firestore-image }}
+      
+      # Run mock services
+      - run: docker compose -f ../docker/docker-compose.ci.yaml up -d
+      
+      # Setup Go
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go/go.mod"
+
+      # Run
       - name: Generate test coverage
         run: go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+        env:
+          FIRESTORE_EMULATOR_HOST: localhost:8200
+          FIRESTORE_PROJECT_ID: dummy-project-id
       - name: Check test coverage
         uses: vladopajic/go-test-coverage@v2
         with:
-          config: ./.testcoverage.yaml
+          config: ./go/.testcoverage.yaml
