@@ -5,6 +5,12 @@ on:
     paths:
       - .github/workflows/go-ci.yaml
       - go/**
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/go-ci.yaml
+      - go/**
 
 jobs:
   ci:
@@ -50,7 +56,7 @@ jobs:
 
       # Run
       - name: Generate test coverage
-        run: go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+        run: go test ./... -coverprofile=../cover.out -covermode=atomic
         env:
           FIRESTORE_EMULATOR_HOST: localhost:8200
           FIRESTORE_PROJECT_ID: dummy-project-id
