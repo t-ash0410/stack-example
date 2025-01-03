@@ -63,5 +63,5 @@ jobs:
       - name: Check test coverage
         # See https://github.com/vladopajic/go-test-coverage/issues/66
         run: |
-          go install github.com/vladopajic/go-test-coverage
-          go run github.com/vladopajic/go-test-coverage -c .testcoverage.yaml
+          go install github.com/vladopajic/go-test-coverage/v2@latest
+          $GOPATH/bin/go-test-coverage -c .testcoverage.yaml
