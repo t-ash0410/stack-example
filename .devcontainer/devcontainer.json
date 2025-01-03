@@ -28,6 +28,9 @@
         "gopls": {
           "formatting.local": "github.com/t-ash0410"
         },
+        "go.testEnvVars": {
+          "FIRESTORE_EMULATOR_HOST": "firestore-test:8200"
+        },
         "files.insertFinalNewline": true,
         // Buf
         "buf.binaryPath": "/usr/local/bin/buf"
