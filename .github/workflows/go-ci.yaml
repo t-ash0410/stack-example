@@ -52,7 +52,9 @@ jobs:
       # Setup Go
       - uses: actions/setup-go@v5
         with:
-          go-version-file: "go/go.mod"
+          go-version-file: go/go.mod
+          cache: true
+          cache-dependency-path: go
 
       # Run
       - name: Generate test coverage

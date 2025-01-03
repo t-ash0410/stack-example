@@ -26,7 +26,7 @@ func main() {
 
 func run(ctx context.Context) error {
 	var (
-		portNumber = os.Getenv("PORT")
+		portNumber = os.Getenv("TICKET_MGR_PORT")
 		port       = ":" + portNumber
 
 		prjID = os.Getenv("FIRESTORE_PROJECT_ID")
