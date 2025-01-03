@@ -63,14 +63,8 @@
   },
   "containerEnv": {
     "SHELL": "/bin/zsh",
-    // For download npm packages
-    "GITHUB_PACKAGES_NPM_READ_AUTH_TOKEN": "${localEnv:GITHUB_PACKAGES_NPM_READ_AUTH_TOKEN}",
-    // Backend application settings
-    "HOST": "0.0.0.0",
-    "PORT": "8080",
-    "DB_HOST": "firestore",
-    "DB_PORT": "8200",
-    "ALLOW_ORIGIN": "http://localhost:3000",
+    // Go application settings
+    "TICKET_MGR_PORT": "8080",
     "FIRESTORE_EMULATOR_HOST": "firestore:8200",
     "FIRESTORE_PROJECT_ID": "dummy-project-id"
   },
@@ -82,9 +76,6 @@
       "version": "latest"
     },
     "ghcr.io/shyim/devcontainers-features/bun:0": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest"
     },
     "ghcr.io/marcozac/devcontainer-features/buf:1": {
