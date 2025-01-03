@@ -29,18 +29,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Setup firestore
-      - name: Cache firestore image
-        id: firestore-image-cache
+      - name: Cache docker compose
+        id: docker-compose-image-cache
         uses: actions/cache@v4
         with:
           path: ${{ matrix.docker-cache-path }}
-          key: ${{ hashFiles('./docker/docker-compose.ci.yaml') }}
+          key: docker-image-cache-${{ hashFiles('./docker/docker-compose.ci.yaml') }}
+
+      # Setup firestore
       - name: Load firestore image if exists
-        if: steps.firestore-image-cache.outputs.cache-hit == 'true'
+        if: steps.docker-compose-image-cache.outputs.cache-hit == 'true'
         run: docker load --input ${{ matrix.docker-cache-path }}/firestore.tar
       - name: Build firestore image and save
-        if: steps.firestore-image-cache.outputs.cache-hit != 'true'
+        if: steps.docker-compose-image-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p ${{ matrix.docker-cache-path }}
           docker pull ${{ matrix.firestore-image }}
