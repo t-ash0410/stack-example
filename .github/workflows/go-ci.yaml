@@ -36,7 +36,7 @@ jobs:
           path: ${{ matrix.docker-cache-path }}
           key: docker-image-cache-${{ hashFiles('./docker/docker-compose.ci.yaml') }}
 
-      # Setup firestore
+      # Load firestore mock
       - name: Load firestore image if exists
         if: steps.docker-image-cache.outputs.cache-hit == 'true'
         run: docker load --input ${{ matrix.docker-cache-path }}/firestore.tar
@@ -47,7 +47,7 @@ jobs:
           docker pull ${{ matrix.firestore-image }}
           docker save --output ${{ matrix.docker-cache-path }}/firestore.tar ${{ matrix.firestore-image }}
       
-      - name: Run mock services
+      - name: Run docker compose
         run: docker compose -f ../docker/docker-compose.ci.yaml up -d
       
       # Setup go
