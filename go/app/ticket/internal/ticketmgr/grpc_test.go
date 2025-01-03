@@ -20,6 +20,7 @@ import (
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/ticketmgr"
 	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
+	"github.com/t-ash0410/stack-example/go/lib/ptr"
 )
 
 func TestServer_CreateTicket(t *testing.T) {
@@ -150,6 +151,187 @@ func TestServer_CreateTicket(t *testing.T) {
 	})
 }
 
+func TestServer_UpdateTicket(t *testing.T) {
+	var (
+		t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
+
+		baseTicket = &firestorex.Ticket{
+			TicketID:    "083c61da-b38d-4a8c-9c2d-f7ff466678b5",
+			Title:       "Some Ticket",
+			CreatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
+			UpdatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
+			Description: "Some ticket description.",
+			Deadline:    t2024_12_29_UTC,
+		}
+	)
+
+	t.Run("Success", func(t *testing.T) {
+		cases := map[string]struct {
+			setupFirestore func(*firestore.Client) error
+
+			req *ticketmgrv1.UpdateTicketRequest
+
+			want       *ticketmgrv1.UpdateTicketResponse
+			wantTicket *firestorex.Ticket
+		}{
+			"Update a some ticket": {
+				setupFirestore: func(c *firestore.Client) error {
+					var (
+						bw  = c.BulkWriter(context.Background())
+						ref = c.Doc(baseTicket.Path())
+					)
+					if _, err := bw.Create(ref, baseTicket); err != nil {
+						return err
+					}
+					bw.End()
+					return nil
+				},
+				req: &ticketmgrv1.UpdateTicketRequest{
+					TicketId:    baseTicket.TicketID,
+					Title:       ptr.Ptr("Updated Ticket"),
+					RequestedBy: "4e770fc1-0977-4ea9-911a-d67d4185817e",
+					Description: ptr.Ptr("Updated ticket description."),
+					Deadline:    timestamppb.New(t2024_12_29_UTC.AddDate(0, 0, 20)),
+				},
+				want: &ticketmgrv1.UpdateTicketResponse{},
+				wantTicket: &firestorex.Ticket{
+					TicketID:    baseTicket.TicketID,
+					Title:       "Updated Ticket",
+					CreatedBy:   baseTicket.CreatedBy,
+					UpdatedBy:   "4e770fc1-0977-4ea9-911a-d67d4185817e",
+					Description: "Updated ticket description.",
+					Deadline:    t2024_12_29_UTC.AddDate(0, 0, 20),
+				},
+			},
+		}
+		for name, tc := range cases {
+			t.Run(name, func(t *testing.T) {
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				if err != nil {
+					t.Fatalf("Failed to init firestore client: %v", err)
+				}
+
+				if err := tc.setupFirestore(fsc); err != nil {
+					t.Fatalf("Failed to setup firestore: %v", err)
+				}
+
+				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				if err != nil {
+					t.Fatalf("Failed to create server: %v", err)
+				}
+
+				res, err := s.UpdateTicket(context.Background(), tc.req)
+				if !assert.Nil(t, err) {
+					return
+				}
+				if diff := cmp.Diff(tc.want, res, protocmp.Transform()); diff != "" {
+					t.Errorf("Response didn't match (-want / +got)\n%s", diff)
+				}
+
+				d := readTicket(t, fsc, baseTicket.TicketID)
+				if diff := cmp.Diff(tc.wantTicket, d); diff != "" {
+					t.Errorf("Stored data didn't match (-want / +got)\n%s", diff)
+				}
+			})
+		}
+	})
+
+	t.Run("Fail", func(t *testing.T) {
+		cases := map[string]struct {
+			setupFirestore func(*firestore.Client) error
+
+			ctx context.Context // optional
+			req *ticketmgrv1.UpdateTicketRequest
+
+			wantErr assert.ErrorAssertionFunc
+		}{
+			"Context cancelled": {
+				ctx: ctxtest.CanceledContext(),
+				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
+					return assert.EqualError(t, err, context.Canceled.Error())
+				},
+			},
+			"NotFound: Ticket is not found": {
+				// setupFirestore // important
+				req: &ticketmgrv1.UpdateTicketRequest{
+					TicketId: baseTicket.TicketID,
+				},
+				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
+					return assert.ErrorContains(t, err, status.Error(codes.NotFound, "").Error())
+				},
+			},
+			"FailedPrecondition: Failed to unmarshal": {
+				setupFirestore: func(c *firestore.Client) error {
+					var (
+						bw      = c.BulkWriter(context.Background())
+						ref     = c.Doc(baseTicket.Path())
+						invalid = map[string]interface{}{
+							"Deadline": "invalid date",
+						}
+					)
+					if _, err := bw.Create(ref, invalid); err != nil {
+						return err
+					}
+					bw.End()
+					return nil
+				},
+				req: &ticketmgrv1.UpdateTicketRequest{
+					TicketId: baseTicket.TicketID,
+				},
+				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
+					return assert.ErrorContains(t, err, status.Error(codes.FailedPrecondition, "failed to unmarshal").Error())
+				},
+			},
+			"InvalidArgument: Validation error": {
+				setupFirestore: func(c *firestore.Client) error {
+					var (
+						bw  = c.BulkWriter(context.Background())
+						ref = c.Doc(baseTicket.Path())
+					)
+					if _, err := bw.Create(ref, baseTicket); err != nil {
+						return err
+					}
+					bw.End()
+					return nil
+				},
+				req: &ticketmgrv1.UpdateTicketRequest{
+					TicketId:    baseTicket.TicketID,
+					RequestedBy: "", // important
+				},
+				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
+					return assert.ErrorContains(t, err, status.Errorf(codes.InvalidArgument, "failed to validate").Error())
+				},
+			},
+		}
+		for name, tc := range cases {
+			t.Run(name, func(t *testing.T) {
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				if err != nil {
+					t.Fatalf("Failed to init firestore client: %v", err)
+				}
+
+				if tc.setupFirestore != nil {
+					if err := tc.setupFirestore(fsc); err != nil {
+						t.Fatalf("Failed to setup firestore: %v", err)
+					}
+				}
+
+				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				if err != nil {
+					t.Fatalf("Failed to create server: %v", err)
+				}
+
+				ctx := context.Background()
+				if tc.ctx != nil {
+					ctx = tc.ctx
+				}
+				_, err = s.UpdateTicket(ctx, tc.req)
+				tc.wantErr(t, err)
+			})
+		}
+	})
+}
+
 func readTicket(t testing.TB, fsc *firestore.Client, docID string) *firestorex.Ticket {
 	ds, err := fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, docID)).Get(context.Background())
 	if err != nil {
@@ -157,7 +339,7 @@ func readTicket(t testing.TB, fsc *firestore.Client, docID string) *firestorex.T
 	}
 	var ret firestorex.Ticket
 	if err := ds.DataTo(&ret); err != nil {
-		t.Fatalf("Failed to marshal document: %v", err)
+		t.Fatalf("Failed to unmarshal document: %v", err)
 	}
 	return &ret
 }
