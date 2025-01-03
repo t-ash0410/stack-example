@@ -25,6 +25,9 @@
             "source.organizeImports": "always"
           }
         },
+        "gopls": {
+          "formatting.local": "github.com/t-ash0410"
+        },
         "files.insertFinalNewline": true,
         // Buf
         "buf.binaryPath": "/usr/local/bin/buf"

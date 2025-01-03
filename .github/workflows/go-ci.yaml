@@ -1,0 +1,67 @@
+name: Go CI
+
+on: 
+  pull_request:
+    paths:
+      - .github/workflows/go-ci.yaml
+      - go/**
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/go-ci.yaml
+      - go/**
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        docker-cache-path: [/tmp/docker-img-arch]
+        firestore-image: ["mtlynch/firestore-emulator"]
+    defaults:
+      run:
+        working-directory: ./go
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup firestore
+      - name: Cache firestore image
+        id: firestore-image-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.docker-cache-path }}
+          key: ${{ hashFiles('./docker/docker-compose.ci.yaml') }}
+      - name: Load firestore image if exists
+        if: steps.firestore-image-cache.outputs.cache-hit == 'true'
+        run: docker load --input ${{ matrix.docker-cache-path }}/firestore.tar
+      - name: Build firestore image and save
+        if: steps.firestore-image-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ matrix.docker-cache-path }}
+          docker pull ${{ matrix.firestore-image }}
+          docker save --output ${{ matrix.docker-cache-path }}/firestore.tar ${{ matrix.firestore-image }}
+      
+      # Run mock services
+      - run: docker compose -f ../docker/docker-compose.ci.yaml up -d
+      
+      # Setup Go
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go/go.mod"
+
+      # Run
+      - name: Generate test coverage
+        run: go test ./... -coverprofile=cover.out -covermode=atomic
+        env:
+          FIRESTORE_EMULATOR_HOST: localhost:8200
+          FIRESTORE_PROJECT_ID: dummy-project-id
+      - name: Check test coverage
+        # See https://github.com/vladopajic/go-test-coverage/issues/66
+        run: |
+          go install github.com/vladopajic/go-test-coverage/v2@latest
+          $(go env GOPATH)/bin/go-test-coverage -c .testcoverage.yaml
