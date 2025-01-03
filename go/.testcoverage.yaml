@@ -1,0 +1,10 @@
+profile: cover.out
+local-prefix: "github.com/t-ash0410/stack-example/go"
+threshold:
+  file: 100
+  package: 100
+  total: 100
+exclude:
+  paths:
+    - \.pb\.go$
+    - main.go$

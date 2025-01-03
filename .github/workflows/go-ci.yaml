@@ -1,0 +1,31 @@
+name: Go CI
+
+on: 
+  pull_request:
+    paths:
+      - .github/workflows/go-ci.yaml
+      - go/**
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    defaults:
+      run:
+        working-directory: ./go
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go/go.mod"
+      - name: Generate test coverage
+        run: go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+      - name: Check test coverage
+        uses: vladopajic/go-test-coverage@v2
+        with:
+          config: ./.testcoverage.yaml
