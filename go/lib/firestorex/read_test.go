@@ -25,9 +25,13 @@ type DummyData struct {
 }
 
 func TestReadAll(t *testing.T) {
+	t.Parallel()
+
 	date := time.Date(2025, 1, 25, 0, 0, 0, 0, time.UTC)
 
 	t.Run("Success: Read all", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -82,6 +86,8 @@ func TestReadAll(t *testing.T) {
 	})
 
 	t.Run("Success: Read once", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -129,6 +135,8 @@ func TestReadAll(t *testing.T) {
 	})
 
 	t.Run("Fail: Cancelled context", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -148,6 +156,8 @@ func TestReadAll(t *testing.T) {
 	})
 
 	t.Run("Fail: Unmarshal fail", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -177,9 +187,13 @@ func TestReadAll(t *testing.T) {
 }
 
 func TestReadOne(t *testing.T) {
+	t.Parallel()
+
 	date := time.Date(2025, 1, 25, 0, 0, 0, 0, time.UTC)
 
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -211,6 +225,8 @@ func TestReadOne(t *testing.T) {
 	})
 
 	t.Run("Fail: Cancelled context", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client
@@ -228,6 +244,8 @@ func TestReadOne(t *testing.T) {
 	})
 
 	t.Run("Fail: Unmarshal fail", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Setup firestore client

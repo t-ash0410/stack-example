@@ -34,7 +34,11 @@ var (
 )
 
 func TestServer_QueryTickets(t *testing.T) {
+	t.Parallel()
+
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
 
@@ -97,6 +101,8 @@ func TestServer_QueryTickets(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -126,6 +132,8 @@ func TestServer_QueryTickets(t *testing.T) {
 	})
 
 	t.Run("Fail", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error // optional
 
@@ -167,6 +175,8 @@ func TestServer_QueryTickets(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -195,7 +205,11 @@ func TestServer_QueryTickets(t *testing.T) {
 }
 
 func TestServer_GetTicketById(t *testing.T) {
+	t.Parallel()
+
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
 
@@ -230,6 +244,8 @@ func TestServer_GetTicketById(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -259,6 +275,8 @@ func TestServer_GetTicketById(t *testing.T) {
 	})
 
 	t.Run("Fail", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error // optional
 
@@ -309,6 +327,8 @@ func TestServer_GetTicketById(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)

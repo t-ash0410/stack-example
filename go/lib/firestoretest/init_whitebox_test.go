@@ -25,11 +25,15 @@ func TestInitFirestoreClient_fail(t *testing.T) {
 }
 
 func Test_enqRemoveAllDocs_fail(t *testing.T) {
+	t.Parallel()
+
 	type DummyData struct {
 		ID string `firestore:"ID"`
 	}
 
 	t.Run("Use closed bulk writer", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		fsc, err := firestore.NewClient(ctx, os.Getenv("FIRESTORE_PROJECT_ID"), option.WithScopes())

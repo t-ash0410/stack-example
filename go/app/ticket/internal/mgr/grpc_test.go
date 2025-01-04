@@ -37,6 +37,8 @@ var (
 )
 
 func TestServer_CreateTicket(t *testing.T) {
+	t.Parallel()
+
 	var (
 		baseReq = &ticketmgrv1.CreateTicketRequest{
 			Title:       "Some Ticket",
@@ -47,6 +49,8 @@ func TestServer_CreateTicket(t *testing.T) {
 	)
 
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			req *ticketmgrv1.CreateTicketRequest
 
@@ -70,6 +74,8 @@ func TestServer_CreateTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -97,6 +103,8 @@ func TestServer_CreateTicket(t *testing.T) {
 	})
 
 	t.Run("Fail", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			ctx context.Context // optional
 			req *ticketmgrv1.CreateTicketRequest
@@ -123,6 +131,8 @@ func TestServer_CreateTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -144,6 +154,8 @@ func TestServer_CreateTicket(t *testing.T) {
 	})
 
 	t.Run("Edge case: Use nested transaction", func(t *testing.T) {
+		t.Parallel()
+
 		fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 		if err != nil {
 			t.Fatalf("Failed to init firestore client: %v", err)
@@ -163,6 +175,8 @@ func TestServer_CreateTicket(t *testing.T) {
 }
 
 func TestServer_UpdateTicket(t *testing.T) {
+	t.Parallel()
+
 	t.Run("Success", func(t *testing.T) {
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
@@ -204,6 +218,8 @@ func TestServer_UpdateTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -236,6 +252,8 @@ func TestServer_UpdateTicket(t *testing.T) {
 	})
 
 	t.Run("Fail", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
 
@@ -304,6 +322,8 @@ func TestServer_UpdateTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -333,6 +353,8 @@ func TestServer_UpdateTicket(t *testing.T) {
 
 func TestServer_DeleteTicket(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			setupFirestore func(*firestore.Client) error
 
@@ -360,6 +382,8 @@ func TestServer_DeleteTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -391,6 +415,8 @@ func TestServer_DeleteTicket(t *testing.T) {
 	})
 
 	t.Run("Fail", func(t *testing.T) {
+		t.Parallel()
+
 		cases := map[string]struct {
 			ctx context.Context // optional
 			req *ticketmgrv1.DeleteTicketRequest
@@ -406,6 +432,8 @@ func TestServer_DeleteTicket(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
+				t.Parallel()
+
 				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
@@ -427,6 +455,8 @@ func TestServer_DeleteTicket(t *testing.T) {
 	})
 
 	t.Run("Edge case: Use nested transaction", func(t *testing.T) {
+		t.Parallel()
+
 		fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 		if err != nil {
 			t.Fatalf("Failed to init firestore client: %v", err)

@@ -10,6 +10,8 @@ import (
 )
 
 func TestCanceledContext(t *testing.T) {
+	t.Parallel()
+
 	ctx := ctxtest.CanceledContext()
 	assert.EqualError(t, ctx.Err(), context.Canceled.Error())
 }
