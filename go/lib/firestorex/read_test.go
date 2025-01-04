@@ -78,7 +78,7 @@ func TestReadAll(t *testing.T) {
 			if !assert.Nil(t, err) {
 				return
 			}
-			got = append(got, d)
+			got = append(got, d.Data)
 		}
 		assert.EqualValues(t, want, got)
 	})
@@ -125,7 +125,7 @@ func TestReadAll(t *testing.T) {
 			if !assert.Nil(t, err) {
 				return
 			}
-			got = append(got, d)
+			got = append(got, d.Data)
 			break // important
 		}
 		assert.EqualValues(t, want, got)

@@ -3,13 +3,20 @@ package firestorex
 import (
 	"fmt"
 	"iter"
+	"time"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
 
-func ReadEach[T any](iter *firestore.DocumentIterator) iter.Seq2[*T, error] {
-	return func(yield func(*T, error) bool) {
+type ResultWithMeta[T any] struct {
+	Data       *T
+	CreateTime time.Time
+	UpdateTime time.Time
+}
+
+func ReadEach[T any](iter *firestore.DocumentIterator) iter.Seq2[*ResultWithMeta[T], error] {
+	return func(yield func(*ResultWithMeta[T], error) bool) {
 		for {
 			doc, err := iter.Next()
 			if err == iterator.Done {
@@ -25,7 +32,12 @@ func ReadEach[T any](iter *firestore.DocumentIterator) iter.Seq2[*T, error] {
 				yield(nil, fmt.Errorf("failed to unmarshal: %w", err))
 				return
 			}
-			if !yield(&d, nil) {
+			ret := ResultWithMeta[T]{
+				Data:       &d,
+				CreateTime: doc.CreateTime,
+				UpdateTime: doc.UpdateTime,
+			}
+			if !yield(&ret, nil) {
 				return
 			}
 		}
