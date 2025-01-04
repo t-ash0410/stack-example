@@ -17,11 +17,15 @@ import (
 )
 
 func TestInitFirestoreClient(t *testing.T) {
+	t.Parallel()
+
 	type DummyData struct {
 		ID string `firestore:"ID"`
 	}
 
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		fsc, err := firestore.NewClient(ctx, os.Getenv("FIRESTORE_PROJECT_ID"))
@@ -56,6 +60,8 @@ func TestInitFirestoreClient(t *testing.T) {
 	})
 
 	t.Run("Fail: Cancelled context", func(t *testing.T) {
+		t.Parallel()
+
 		_, err := firestoretest.InitFirestoreClient(ctxtest.CanceledContext(), "dummy")
 		assert.ErrorContains(t, err, "failed to remove all documents")
 	})

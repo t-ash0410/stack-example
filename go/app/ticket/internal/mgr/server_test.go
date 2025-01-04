@@ -10,6 +10,8 @@ import (
 )
 
 func TestNewTicketMgrServer(t *testing.T) {
+	t.Parallel()
+
 	cases := map[string]struct {
 		fsc *firestore.Client
 
@@ -30,6 +32,8 @@ func TestNewTicketMgrServer(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			_, err := mgr.NewTicketMgrServer(tc.fsc)
 			tc.wantErr(t, err)
 		})
