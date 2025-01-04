@@ -18,6 +18,10 @@ const (
 	collectionNameDummy = "dummy-collection"
 )
 
+var (
+	date = time.Date(2025, 1, 25, 0, 0, 0, 0, time.UTC)
+)
+
 type DummyData struct {
 	ID   string    `firestore:"ID"`
 	Tag  string    `firestore:"Tag"`
@@ -26,8 +30,6 @@ type DummyData struct {
 
 func TestReadAll(t *testing.T) {
 	t.Parallel()
-
-	date := time.Date(2025, 1, 25, 0, 0, 0, 0, time.UTC)
 
 	t.Run("Success: Read all", func(t *testing.T) {
 		t.Parallel()
@@ -189,8 +191,6 @@ func TestReadAll(t *testing.T) {
 func TestReadOne(t *testing.T) {
 	t.Parallel()
 
-	date := time.Date(2025, 1, 25, 0, 0, 0, 0, time.UTC)
-
 	t.Run("Success", func(t *testing.T) {
 		t.Parallel()
 
@@ -242,8 +242,12 @@ func TestReadOne(t *testing.T) {
 		_, err = firestorex.ReadOne[DummyData](cctx, fsc.Collection(collectionNameDummy).Doc("dummy"))
 		assert.ErrorContains(t, err, "failed to read")
 	})
+}
 
-	t.Run("Fail: Unmarshal fail", func(t *testing.T) {
+func TestReadOneWithTxn(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Success", func(t *testing.T) {
 		t.Parallel()
 
 		ctx := context.Background()
@@ -256,18 +260,51 @@ func TestReadOne(t *testing.T) {
 
 		// Prepare dummy data
 		var (
-			invalid = map[string]any{
-				"Date": "invalid date", // important
-			}
 			bw = fsc.BulkWriter(ctx)
+			dd = &DummyData{
+				ID:   "dummy",
+				Tag:  "tag",
+				Date: date,
+			}
 		)
-		if _, err := bw.Create(fsc.Doc(fmt.Sprintf("%s/%s", collectionNameDummy, "dummy")), invalid); err != nil {
+		if _, err := bw.Create(fsc.Doc(fmt.Sprintf("%s/%s", collectionNameDummy, dd.ID)), dd); err != nil {
 			t.Fatalf("Failed to create dummy data: %v", err)
 		}
 		bw.End()
 
 		// Run
-		_, err = firestorex.ReadOne[DummyData](ctx, fsc.Collection(collectionNameDummy).Doc("dummy"))
-		assert.ErrorContains(t, err, "failed to unmarshal")
+		err = fsc.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+			got, err := firestorex.ReadOneWithTxn[DummyData](tx, fsc.Collection(collectionNameDummy).Doc(dd.ID))
+			if err != nil {
+				return err
+			}
+			assert.EqualValues(t, dd, got.Data)
+			return nil
+		})
+		assert.NoError(t, err)
+	})
+
+	t.Run("Fail: TODO", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+
+		// Setup firestore client
+		fsc, err := firestoretest.InitFirestoreClient(ctx, collectionNameDummy)
+		if err != nil {
+			t.Fatalf("Failed to create firestore client: %v", err)
+		}
+
+		cctx, cancel := context.WithCancel(ctx)
+		t.Cleanup(cancel)
+
+		// Run
+		err = fsc.RunTransaction(cctx, func(ctx context.Context, tx *firestore.Transaction) error {
+			cancel() // important
+
+			_, err := firestorex.ReadOneWithTxn[DummyData](tx, fsc.Collection(collectionNameDummy).Doc("dummy"))
+			return err
+		})
+		assert.ErrorContains(t, err, "failed to read")
 	})
 }
