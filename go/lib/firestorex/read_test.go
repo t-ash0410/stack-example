@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
@@ -111,7 +112,7 @@ func TestReadAll(t *testing.T) {
 
 		// Run
 		var (
-			iter = fsc.Collection(collectionNameDummy).Where("Tag", "==", "tag").Documents(ctx)
+			iter = fsc.Collection(collectionNameDummy).Where("Tag", "==", "tag").OrderBy("ID", firestore.Asc).Documents(ctx)
 			want = []*DummyData{
 				{
 					ID:   "dummy-0",
