@@ -97,7 +97,7 @@ func TestServer_QueryTickets(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
-				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
 				}
@@ -167,7 +167,7 @@ func TestServer_QueryTickets(t *testing.T) {
 		}
 		for name, tc := range cases {
 			t.Run(name, func(t *testing.T) {
-				fsc, err := firestoretest.InitFirestoreClient(context.Background(), "tickets")
+				fsc, err := firestoretest.InitFirestoreClient(context.Background(), modelfs.CollectionNameTickets)
 				if err != nil {
 					t.Fatalf("Failed to init firestore client: %v", err)
 				}
