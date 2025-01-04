@@ -3,6 +3,7 @@ package querier
 import (
 	"context"
 
+	"cloud.google.com/go/firestore"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -22,8 +23,12 @@ func (s *TicketQuerierServer) QueryTickets(ctx context.Context,
 	}
 
 	var (
-		res  = &ticketquerierv1.QueryTicketsResponse{}
-		iter = s.fsc.Collection(modelfs.CollectionNameTickets).Where("CreatedBy", "==", req.RequestedBy).Documents(ctx)
+		res = &ticketquerierv1.QueryTicketsResponse{}
+
+		iter = s.fsc.Collection(modelfs.CollectionNameTickets).
+			Where("CreatedBy", "==", req.RequestedBy).
+			OrderBy("TicketID", firestore.Asc).
+			Documents(ctx)
 	)
 	for d, err := range firestorex.ReadEach[modelfs.Ticket](iter) {
 		if err != nil {

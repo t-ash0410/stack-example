@@ -146,6 +146,7 @@ func TestServer_QueryTickets(t *testing.T) {
 						bw      = c.BulkWriter(context.Background())
 						ref     = c.Doc(baseTicket.Path())
 						invalid = map[string]interface{}{
+							"TicketID":  "invalid",
 							"Deadline":  "invalid date",
 							"CreatedBy": baseTicket.CreatedBy,
 						}
