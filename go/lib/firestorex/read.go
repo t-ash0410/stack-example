@@ -2,27 +2,32 @@ package firestorex
 
 import (
 	"fmt"
+	"iter"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
 
-func ReadAll[T any](iter *firestore.DocumentIterator) ([]*T, error) {
-	var ret []*T
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return nil, fmt.Errorf("failed to read: %w", err)
-		}
+func ReadEach[T any](iter *firestore.DocumentIterator) iter.Seq2[*T, error] {
+	return func(yield func(*T, error) bool) {
+		for {
+			doc, err := iter.Next()
+			if err == iterator.Done {
+				return
+			}
+			if err != nil {
+				yield(nil, fmt.Errorf("failed to read: %w", err))
+				return
+			}
 
-		var d T
-		if err := doc.DataTo(&d); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal: %w", err)
+			var d T
+			if err := doc.DataTo(&d); err != nil {
+				yield(nil, fmt.Errorf("failed to unmarshal: %w", err))
+				return
+			}
+			if !yield(&d, nil) {
+				return
+			}
 		}
-		ret = append(ret, &d)
 	}
-	return ret, nil
 }
