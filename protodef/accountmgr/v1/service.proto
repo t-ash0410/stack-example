@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package accountmgr.v1;
+
+service AccountMgrService {
+  rpc SlackSSO(SlackSSORequest) returns (SlackSSOResponse) {}
+}
+
+// ========================== Models per API ==========================
+
+message SlackSSORequest {
+  string email = 1;
+  string name = 2;
+  string slack_user_id = 3;
+  string slack_team_id = 4;
+}
+
+message SlackSSOResponse {
+  string user_id = 1;
+}
