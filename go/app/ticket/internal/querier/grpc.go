@@ -40,6 +40,29 @@ func (s *TicketQuerierServer) QueryTickets(ctx context.Context,
 	return res, nil
 }
 
+func (s *TicketQuerierServer) GetTicketById(ctx context.Context,
+	req *ticketquerierv1.GetTicketByIdRequest,
+) (*ticketquerierv1.GetTicketByIdResponse, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
+	ref := s.fsc.Collection(modelfs.CollectionNameTickets).Doc(req.TicketId)
+	t, err := firestorex.ReadOne[modelfs.Ticket](ctx, ref)
+	if err != nil {
+		if s, ok := status.FromError(err); ok && s.Code() == codes.NotFound {
+			return nil, status.Errorf(codes.NotFound, "not found, ticket id = %q: %v", req.TicketId, err)
+		}
+		return nil, status.Errorf(codes.Internal, "failed to read, ticket id = %q: %v", req.TicketId, err)
+	}
+
+	return &ticketquerierv1.GetTicketByIdResponse{
+		Ticket: ticketModelToPB(t),
+	}, nil
+}
+
 func ticketModelToPB(d *firestorex.ResultWithMeta[modelfs.Ticket]) *ticketquerierv1.Ticket {
 	return &ticketquerierv1.Ticket{
 		TicketId:    d.Data.TicketID,
