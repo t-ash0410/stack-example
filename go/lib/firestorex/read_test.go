@@ -284,7 +284,7 @@ func TestReadOneWithTxn(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("Fail: TODO", func(t *testing.T) {
+	t.Run("Fail: Cancelled context", func(t *testing.T) {
 		t.Parallel()
 
 		ctx := context.Background()
