@@ -75,7 +75,7 @@ func TestReadAll(t *testing.T) {
 		)
 		got := []*DummyData{}
 		for d, err := range firestorex.ReadEach[DummyData](iter) {
-			if !assert.Nil(t, err) {
+			if !assert.NoError(t, err) {
 				return
 			}
 			got = append(got, d.Data)
@@ -122,7 +122,7 @@ func TestReadAll(t *testing.T) {
 		)
 		got := []*DummyData{}
 		for d, err := range firestorex.ReadEach[DummyData](iter) {
-			if !assert.Nil(t, err) {
+			if !assert.NoError(t, err) {
 				return
 			}
 			got = append(got, d.Data)

@@ -28,7 +28,7 @@ func TestTicket_Validate(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		t.Parallel()
-		assert.Nil(t, baseTicket.Validate())
+		assert.NoError(t, baseTicket.Validate())
 	})
 
 	t.Run("Fail", func(t *testing.T) {

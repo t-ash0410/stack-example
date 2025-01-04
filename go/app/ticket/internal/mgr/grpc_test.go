@@ -81,7 +81,7 @@ func TestServer_CreateTicket(t *testing.T) {
 				}
 
 				res, err := s.CreateTicket(context.Background(), tc.req)
-				if !assert.Nil(t, err) {
+				if !assert.NoError(t, err) {
 					return
 				}
 				if diff := cmp.Diff(tc.want, res, protocmp.Transform(), protocmp.IgnoreFields(tc.want, "ticket_id")); diff != "" {
@@ -219,7 +219,7 @@ func TestServer_UpdateTicket(t *testing.T) {
 				}
 
 				res, err := s.UpdateTicket(context.Background(), tc.req)
-				if !assert.Nil(t, err) {
+				if !assert.NoError(t, err) {
 					return
 				}
 				if diff := cmp.Diff(tc.want, res, protocmp.Transform()); diff != "" {
@@ -375,7 +375,7 @@ func TestServer_DeleteTicket(t *testing.T) {
 				}
 
 				res, err := s.DeleteTicket(context.Background(), tc.req)
-				if !assert.Nil(t, err) {
+				if !assert.NoError(t, err) {
 					return
 				}
 				if diff := cmp.Diff(tc.want, res, protocmp.Transform()); diff != "" {
