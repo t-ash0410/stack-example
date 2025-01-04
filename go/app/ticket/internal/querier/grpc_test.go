@@ -24,10 +24,10 @@ var (
 	t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
 
 	baseTicket = &modelfs.Ticket{
-		TicketID:    "083c61da-b38d-4a8c-9c2d-f7ff466678b5",
+		TicketID:    "dc8de39a-256a-4aa8-89b9-a974f01d68c1",
 		Title:       "Some Ticket",
-		CreatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
-		UpdatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
+		CreatedBy:   "1a004110-5713-4fc0-93c0-d292c83b3277",
+		UpdatedBy:   "1a004110-5713-4fc0-93c0-d292c83b3277",
 		Description: "Some ticket description.",
 		Deadline:    t2024_12_29_UTC,
 	}
