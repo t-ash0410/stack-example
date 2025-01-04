@@ -14,9 +14,9 @@ export const Ticket = /*@__PURE__*/ proto3.makeMessageType(
     { no: 1, name: "ticket_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "created_at", kind: "message", T: Timestamp },
     { no: 3, name: "updated_at", kind: "message", T: Timestamp },
-    { no: 4, name: "requested_by", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 6, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 4, name: "created_by", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "deadline", kind: "message", T: Timestamp },
   ],
 );

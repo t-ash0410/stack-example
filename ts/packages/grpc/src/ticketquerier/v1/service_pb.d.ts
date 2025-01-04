@@ -26,19 +26,19 @@ export declare class Ticket extends Message<Ticket> {
   updatedAt?: Timestamp;
 
   /**
-   * @generated from field: string requested_by = 4;
+   * @generated from field: string created_by = 4;
    */
-  requestedBy: string;
+  createdBy: string;
 
   /**
-   * @generated from field: optional string title = 5;
+   * @generated from field: string title = 5;
    */
-  title?: string;
+  title: string;
 
   /**
-   * @generated from field: optional string description = 6;
+   * @generated from field: string description = 6;
    */
-  description?: string;
+  description: string;
 
   /**
    * @generated from field: google.protobuf.Timestamp deadline = 7;
