@@ -9,7 +9,7 @@ import (
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
 )
 
-func TestNewServer(t *testing.T) {
+func TestNewTicketMgrServer(t *testing.T) {
 	cases := map[string]struct {
 		fsc *firestore.Client
 
