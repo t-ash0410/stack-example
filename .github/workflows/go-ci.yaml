@@ -62,7 +62,7 @@ jobs:
           path: |
             ~/go/mod
             ~/.cache/go-build
-          key: go-cache-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+          key: go-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('./go/go.sum') }}
           restore-keys: |
             go-cache-${{ runner.os }}-${{ runner.arch }}-
             go-cache-${{ runner.os }}-
@@ -88,4 +88,4 @@ jobs:
           path: |
             ~/go/mod
             ~/.cache/go-build
-          key: go-cache-${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+          key: go-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('./go/go.sum') }}
