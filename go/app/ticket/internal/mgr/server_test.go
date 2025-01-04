@@ -1,4 +1,4 @@
-package ticketmgr_test
+package mgr_test
 
 import (
 	"testing"
@@ -6,10 +6,10 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/ticketmgr"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
 )
 
-func TestNewServer(t *testing.T) {
+func TestNewTicketMgrServer(t *testing.T) {
 	cases := map[string]struct {
 		fsc *firestore.Client
 
@@ -30,7 +30,7 @@ func TestNewServer(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			_, err := ticketmgr.NewTicketMgrServer(tc.fsc)
+			_, err := mgr.NewTicketMgrServer(tc.fsc)
 			tc.wantErr(t, err)
 		})
 	}

@@ -92,12 +92,12 @@ func TestServer_Run(t *testing.T) {
 		src := grpc_reflection_v1.NewServerReflectionClient(c)
 		srRes, err := src.ServerReflectionInfo(ctx)
 		assert.NotNil(t, srRes)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 
 		hc := grpc_health_v1.NewHealthClient(c)
 		hcRes, err := hc.Check(ctx, &grpc_health_v1.HealthCheckRequest{})
 		assert.NotNil(t, hcRes)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 
 		cancel()
 

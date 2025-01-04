@@ -1,4 +1,4 @@
-package firestorex
+package modelfs
 
 import (
 	"fmt"

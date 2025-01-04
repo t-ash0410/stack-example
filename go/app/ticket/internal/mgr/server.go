@@ -1,4 +1,4 @@
-package ticketmgr
+package mgr
 
 import (
 	"fmt"

@@ -8,8 +8,8 @@ import (
 
 	"cloud.google.com/go/firestore"
 
-	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
+	ticketquerierv1 "github.com/t-ash0410/stack-example/go/api/ticketquerier/v1"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/querier"
 	"github.com/t-ash0410/stack-example/go/lib/grpcx"
 )
 
@@ -26,7 +26,7 @@ func main() {
 
 func run(ctx context.Context) error {
 	var (
-		portNumber = os.Getenv("TICKET_MGR_PORT")
+		portNumber = os.Getenv("TICKET_QUERIER_PORT")
 		port       = ":" + portNumber
 
 		prjID = os.Getenv("FIRESTORE_PROJECT_ID")
@@ -38,11 +38,11 @@ func run(ctx context.Context) error {
 	}
 
 	s := grpcx.NewServer()
-	server, err := mgr.NewTicketMgrServer(fsc)
+	server, err := querier.NewTicketQuerierServer(fsc)
 	if err != nil {
 		return fmt.Errorf("failed to create server: %w", err)
 	}
-	ticketmgrv1.RegisterTicketMgrServiceServer(s.Srv, server)
+	ticketquerierv1.RegisterTicketQuerierServiceServer(s.Srv, server)
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
