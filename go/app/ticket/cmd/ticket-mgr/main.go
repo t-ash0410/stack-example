@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/firestore"
 
 	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/ticketmgr"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
 	"github.com/t-ash0410/stack-example/go/lib/grpcx"
 )
 
@@ -38,7 +38,7 @@ func run(ctx context.Context) error {
 	}
 
 	s := grpcx.NewServer()
-	server, err := ticketmgr.NewTicketMgrServer(fsc)
+	server, err := mgr.NewTicketMgrServer(fsc)
 	if err != nil {
 		return fmt.Errorf("failed to create server: %w", err)
 	}

@@ -1,4 +1,4 @@
-package ticketmgr_test
+package mgr_test
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 
 	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/firestorex"
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/ticketmgr"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
 	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
 	"github.com/t-ash0410/stack-example/go/lib/ptr"
@@ -75,7 +75,7 @@ func TestServer_CreateTicket(t *testing.T) {
 					t.Fatalf("Failed to init firestore client: %v", err)
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -128,7 +128,7 @@ func TestServer_CreateTicket(t *testing.T) {
 					t.Fatalf("Failed to init firestore client: %v", err)
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -149,7 +149,7 @@ func TestServer_CreateTicket(t *testing.T) {
 			t.Fatalf("Failed to init firestore client: %v", err)
 		}
 
-		s, err := ticketmgr.NewTicketMgrServer(fsc)
+		s, err := mgr.NewTicketMgrServer(fsc)
 		if err != nil {
 			t.Fatalf("Failed to create server: %v", err)
 		}
@@ -213,7 +213,7 @@ func TestServer_UpdateTicket(t *testing.T) {
 					t.Fatalf("Failed to setup firestore: %v", err)
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -315,7 +315,7 @@ func TestServer_UpdateTicket(t *testing.T) {
 					}
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -369,7 +369,7 @@ func TestServer_DeleteTicket(t *testing.T) {
 					t.Fatalf("Failed to setup firestore: %v", err)
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -411,7 +411,7 @@ func TestServer_DeleteTicket(t *testing.T) {
 					t.Fatalf("Failed to init firestore client: %v", err)
 				}
 
-				s, err := ticketmgr.NewTicketMgrServer(fsc)
+				s, err := mgr.NewTicketMgrServer(fsc)
 				if err != nil {
 					t.Fatalf("Failed to create server: %v", err)
 				}
@@ -432,7 +432,7 @@ func TestServer_DeleteTicket(t *testing.T) {
 			t.Fatalf("Failed to init firestore client: %v", err)
 		}
 
-		s, err := ticketmgr.NewTicketMgrServer(fsc)
+		s, err := mgr.NewTicketMgrServer(fsc)
 		if err != nil {
 			t.Fatalf("Failed to create server: %v", err)
 		}
