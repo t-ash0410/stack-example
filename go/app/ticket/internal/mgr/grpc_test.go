@@ -16,8 +16,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/firestorex"
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/mgr"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/modelfs"
 	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
 	"github.com/t-ash0410/stack-example/go/lib/ptr"
@@ -26,7 +26,7 @@ import (
 var (
 	t2024_12_29_UTC = time.Date(2024, 12, 29, 0, 0, 0, 0, time.UTC)
 
-	baseTicket = &firestorex.Ticket{
+	baseTicket = &modelfs.Ticket{
 		TicketID:    "083c61da-b38d-4a8c-9c2d-f7ff466678b5",
 		Title:       "Some Ticket",
 		CreatedBy:   "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f",
@@ -51,14 +51,14 @@ func TestServer_CreateTicket(t *testing.T) {
 			req *ticketmgrv1.CreateTicketRequest
 
 			want       *ticketmgrv1.CreateTicketResponse
-			wantTicket *firestorex.Ticket
+			wantTicket *modelfs.Ticket
 		}{
 			"Create a some ticket": {
 				req:  baseReq,
 				want: &ticketmgrv1.CreateTicketResponse{
 					// TicketId
 				},
-				wantTicket: &firestorex.Ticket{
+				wantTicket: &modelfs.Ticket{
 					// TicketID
 					Title:       baseReq.Title,
 					CreatedBy:   baseReq.RequestedBy,
@@ -170,7 +170,7 @@ func TestServer_UpdateTicket(t *testing.T) {
 			req *ticketmgrv1.UpdateTicketRequest
 
 			want       *ticketmgrv1.UpdateTicketResponse
-			wantTicket *firestorex.Ticket
+			wantTicket *modelfs.Ticket
 		}{
 			"Update a some ticket": {
 				setupFirestore: func(c *firestore.Client) error {
@@ -192,7 +192,7 @@ func TestServer_UpdateTicket(t *testing.T) {
 					Deadline:    timestamppb.New(t2024_12_29_UTC.AddDate(0, 0, 20)),
 				},
 				want: &ticketmgrv1.UpdateTicketResponse{},
-				wantTicket: &firestorex.Ticket{
+				wantTicket: &modelfs.Ticket{
 					TicketID:    baseTicket.TicketID,
 					Title:       "Updated Ticket",
 					CreatedBy:   baseTicket.CreatedBy,
@@ -382,7 +382,7 @@ func TestServer_DeleteTicket(t *testing.T) {
 					t.Errorf("Response didn't match (-want / +got)\n%s", diff)
 					return
 				}
-				_, err = fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, tc.req.TicketId)).Get(context.Background())
+				_, err = fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, tc.req.TicketId)).Get(context.Background())
 				if !assert.ErrorContains(t, err, status.Errorf(codes.NotFound, "").Error()) {
 					return
 				}
@@ -445,12 +445,12 @@ func TestServer_DeleteTicket(t *testing.T) {
 	})
 }
 
-func readTicket(t testing.TB, fsc *firestore.Client, docID string) *firestorex.Ticket {
-	ds, err := fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, docID)).Get(context.Background())
+func readTicket(t testing.TB, fsc *firestore.Client, docID string) *modelfs.Ticket {
+	ds, err := fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, docID)).Get(context.Background())
 	if err != nil {
 		t.Fatalf("Failed to read document: %v", err)
 	}
-	var ret firestorex.Ticket
+	var ret modelfs.Ticket
 	if err := ds.DataTo(&ret); err != nil {
 		t.Fatalf("Failed to unmarshal document: %v", err)
 	}

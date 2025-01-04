@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
-	"github.com/t-ash0410/stack-example/go/app/ticket/internal/firestorex"
+	"github.com/t-ash0410/stack-example/go/app/ticket/internal/modelfs"
 )
 
 func (s *TicketMgrServer) CreateTicket(ctx context.Context,
@@ -39,9 +39,9 @@ func (s *TicketMgrServer) CreateTicket(ctx context.Context,
 	}, nil
 }
 
-func newTicketFromCreateReq(req *ticketmgrv1.CreateTicketRequest) (*firestorex.Ticket, error) {
+func newTicketFromCreateReq(req *ticketmgrv1.CreateTicketRequest) (*modelfs.Ticket, error) {
 	var (
-		t = &firestorex.Ticket{
+		t = &modelfs.Ticket{
 			TicketID:    uuid.NewString(),
 			Title:       req.Title,
 			CreatedBy:   req.RequestedBy,
@@ -66,8 +66,8 @@ func (s *TicketMgrServer) UpdateTicket(ctx context.Context,
 	}
 
 	var (
-		t   firestorex.Ticket
-		ref = s.fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, req.TicketId))
+		t   modelfs.Ticket
+		ref = s.fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, req.TicketId))
 	)
 	err := s.fsc.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
 		doc, err := tx.Get(ref)
@@ -89,7 +89,7 @@ func (s *TicketMgrServer) UpdateTicket(ctx context.Context,
 	return &ticketmgrv1.UpdateTicketResponse{}, nil
 }
 
-func updateTicketByUpdateReq(t *firestorex.Ticket, req *ticketmgrv1.UpdateTicketRequest) error {
+func updateTicketByUpdateReq(t *modelfs.Ticket, req *ticketmgrv1.UpdateTicketRequest) error {
 	t.UpdatedBy = req.RequestedBy
 
 	if req.Title != nil {
@@ -114,7 +114,7 @@ func (s *TicketMgrServer) DeleteTicket(ctx context.Context,
 	default:
 	}
 
-	ref := s.fsc.Doc(fmt.Sprintf("%s/%s", firestorex.CollectionNameTickets, req.TicketId))
+	ref := s.fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, req.TicketId))
 	err := s.fsc.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
 		return tx.Delete(ref)
 	})
