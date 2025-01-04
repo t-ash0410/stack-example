@@ -21,7 +21,7 @@ Update ticket
 buf curl --http2-prior-knowledge --protocol grpc \
   http://localhost:8080/ticketmgr.v1.TicketMgrService/UpdateTicket \
   -d '{
-    "ticket_id": "3b227eab-47be-4fb6-bf25-797ae37ca35e",
+    "ticket_id": "some ticket id",
     "requested_by":"4e770fc1-0977-4ea9-911a-d67d4185817e",
     "title": "Updated Ticket",
     "description": "Updated ticket description.",
@@ -35,6 +35,26 @@ Delete ticket
 buf curl --http2-prior-knowledge --protocol grpc \
   http://localhost:8080/ticketmgr.v1.TicketMgrService/DeleteTicket \
   -d '{
-    "ticket_id": "3b227eab-47be-4fb6-bf25-797ae37ca35e"
+    "ticket_id": "some ticket id"
+  }'
+```
+
+List tickets
+
+```zsh
+buf curl --http2-prior-knowledge --protocol grpc \
+  http://localhost:8081/ticketquerier.v1.TicketQuerierService/QueryTickets \
+  -d '{
+    "requested_by": "8ea79f88-5b4b-4df6-b438-81a2ccf6b09f"
+  }'
+```
+
+Get ticket
+
+```zsh
+buf curl --http2-prior-knowledge --protocol grpc \
+  http://localhost:8081/ticketquerier.v1.TicketQuerierService/GetTicketById \
+  -d '{
+    "ticket_id": "some ticket id"
   }'
 ```

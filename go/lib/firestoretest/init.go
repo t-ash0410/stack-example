@@ -3,14 +3,16 @@ package firestoretest
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"cloud.google.com/go/firestore"
+	"github.com/google/uuid"
 	"google.golang.org/api/iterator"
 )
 
+var newFirestoreClient = firestore.NewClient
+
 func InitFirestoreClient(ctx context.Context, collections ...string) (*firestore.Client, error) {
-	fsc, err := firestore.NewClient(ctx, os.Getenv("FIRESTORE_PROJECT_ID"))
+	fsc, err := newFirestoreClient(ctx, uuid.NewString())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create firestore client: %w", err)
 	}

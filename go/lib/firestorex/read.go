@@ -1,6 +1,7 @@
 package firestorex
 
 import (
+	"context"
 	"fmt"
 	"iter"
 	"time"
@@ -42,4 +43,22 @@ func ReadEach[T any](iter *firestore.DocumentIterator) iter.Seq2[*ResultWithMeta
 			}
 		}
 	}
+}
+
+func ReadOne[T any](ctx context.Context, ref *firestore.DocumentRef) (*ResultWithMeta[T], error) {
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read: %w", err)
+	}
+
+	var d T
+	if err := doc.DataTo(&d); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal: %w", err)
+	}
+
+	return &ResultWithMeta[T]{
+		Data:       &d,
+		CreateTime: doc.CreateTime,
+		UpdateTime: doc.UpdateTime,
+	}, nil
 }

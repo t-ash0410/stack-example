@@ -68,6 +68,7 @@
     "SHELL": "/bin/zsh",
     // Go application settings
     "TICKET_MGR_PORT": "8080",
+    "TICKET_QUERIER_PORT": "8081",
     "FIRESTORE_EMULATOR_HOST": "firestore:8200",
     "FIRESTORE_PROJECT_ID": "dummy-project-id"
   },

@@ -59,18 +59,4 @@ func TestInitFirestoreClient(t *testing.T) {
 		_, err := firestoretest.InitFirestoreClient(ctxtest.CanceledContext(), "dummy")
 		assert.ErrorContains(t, err, "failed to remove all documents")
 	})
-
-	t.Run("Fail: Empty project id", func(t *testing.T) {
-		var (
-			envKey = "FIRESTORE_PROJECT_ID"
-			pid    = os.Getenv(envKey)
-		)
-		os.Setenv(envKey, "")
-		t.Cleanup(func() {
-			os.Setenv(envKey, pid)
-		})
-
-		_, err := firestoretest.InitFirestoreClient(context.Background(), "dummy")
-		assert.ErrorContains(t, err, "failed to create firestore client")
-	})
 }
