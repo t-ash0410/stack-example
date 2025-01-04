@@ -11,12 +11,25 @@ import (
 	"google.golang.org/api/option"
 )
 
-func Test_enqRemoveAllDocs(t *testing.T) {
+func TestInitFirestoreClient_fail(t *testing.T) {
+	t.Run("Failed to create firestore client", func(t *testing.T) {
+		newFirestoreClient = func(ctx context.Context, projectID string, opts ...option.ClientOption) (*firestore.Client, error) {
+			return nil, fmt.Errorf("some error")
+		}
+		t.Cleanup(func() {
+			newFirestoreClient = firestore.NewClient
+		})
+		_, err := InitFirestoreClient(context.Background())
+		assert.ErrorContains(t, err, "failed to create firestore client")
+	})
+}
+
+func Test_enqRemoveAllDocs_fail(t *testing.T) {
 	type DummyData struct {
 		ID string `firestore:"ID"`
 	}
 
-	t.Run("Fail: Empty project id", func(t *testing.T) {
+	t.Run("Use closed bulk writer", func(t *testing.T) {
 		ctx := context.Background()
 
 		fsc, err := firestore.NewClient(ctx, os.Getenv("FIRESTORE_PROJECT_ID"), option.WithScopes())
