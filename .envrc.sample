@@ -1,13 +1,25 @@
-# Go Application settings
+# Common application settings
+export SLACK_CLIENT_ID="<YOUR SLACK CLIENT ID>"
+
+# Go application settings
 export TICKET_MGR_PORT="9080"
 export TICKET_QUERIER_PORT="9081"
 export ACCOUNT_MGR_PORT="9082"
 export FIRESTORE_EMULATOR_HOST="firestore:8200"
 export FIRESTORE_PROJECT_ID="dummy-project-id"
 
+# BFF application settings
+export BFF_PORT="8080"
+export CORS_ORIGIN="http://localhost:3000"
+export DOMAIN="localhost"
+export JWT_SECRET="some-secret"
+export JWT_KEY="jwt"
+export SLACK_CLIENT_SECRET="<YOUR SLACK CLIENT SECRET>"
+export SLACK_SSO_REDIRECT_URL="https://localhost:3000/slack/sso"
+export TICKET_MGR_SERVICE_ENDPOINT="http://localhost:9080"
+export TICKET_QUERIER_SERVICE_ENDPOINT="http://localhost:9081"
+export ACCOUNT_MGR_SERVICE_ENDPOINT="http://localhost:9082"
+
 # Frontend application settings
 export API_BASE_URL="http://localhost:8080"
 export PORT="3000"
-
-# Common application settings
-export SLACK_CLIENT_ID=""
