@@ -1,7 +1,8 @@
 import { BFF_PORT, CORS_ORIGIN } from '@bff/env'
 import { errorHandler } from '@bff/error'
-import { informationLog, initLogger } from '@bff/log'
-import { healthRoute } from '@bff/routes'
+import { initLogger } from '@bff/log'
+import { informationLog, initContext } from '@bff/middleware'
+import { authRoute, healthRoute } from '@bff/routes'
 import { Hono } from 'hono'
 import { except } from 'hono/combine'
 import { cors } from 'hono/cors'
@@ -15,13 +16,14 @@ const app = new Hono()
       origin: CORS_ORIGIN,
       credentials: true,
     }),
-    // setupDefaultContext,
+    initContext,
     secureHeaders(),
   )
   .use('*', except(['/health'], informationLog))
   // app.use('*', except(['/health', '/auth/*'], authN))
   .onError(errorHandler)
   .route('/health', healthRoute)
+  .route('/auth', authRoute)
 
 // Run
 export default {
