@@ -13,6 +13,7 @@
     "hono": "^4.6.15",
     "jose": "^5.9.6",
     "neverthrow": "^8.1.1",
+    "pino": "^9.6.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
