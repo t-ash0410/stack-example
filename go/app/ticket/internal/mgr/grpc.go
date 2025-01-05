@@ -11,6 +11,7 @@ import (
 
 	ticketmgrv1 "github.com/t-ash0410/stack-example/go/api/ticketmgr/v1"
 	"github.com/t-ash0410/stack-example/go/app/ticket/internal/modelfs"
+	"github.com/t-ash0410/stack-example/go/lib/firestorex"
 )
 
 func (s *TicketMgrServer) CreateTicket(ctx context.Context,
@@ -65,22 +66,18 @@ func (s *TicketMgrServer) UpdateTicket(ctx context.Context,
 	default:
 	}
 
-	var (
-		t   modelfs.Ticket
-		ref = s.fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, req.TicketId))
-	)
 	err := s.fsc.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
-		doc, err := tx.Get(ref)
+		ref := s.fsc.Doc(fmt.Sprintf("%s/%s", modelfs.CollectionNameTickets, req.TicketId))
+		t, err := firestorex.ReadOneWithTxn[modelfs.Ticket](tx, ref)
 		if err != nil {
-			return err
+			return status.Errorf(codes.Internal, "failed to read, ticket id = %q: %v", req.TicketId, err)
 		}
-		if err := doc.DataTo(&t); err != nil {
-			return status.Errorf(codes.FailedPrecondition, "failed to unmarshal, ticket id = %q: %v", req.TicketId, err)
-		}
-		if err := updateTicketByUpdateReq(&t, req); err != nil {
+
+		if err := updateTicketByUpdateReq(t.Data, req); err != nil {
 			return status.Errorf(codes.InvalidArgument, "failed to validate, ticket id = %q: %v", req.TicketId, err)
 		}
-		return tx.Set(ref, &t)
+
+		return tx.Set(ref, t.Data)
 	})
 	if err != nil {
 		return nil, err

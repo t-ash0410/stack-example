@@ -268,35 +268,13 @@ func TestServer_UpdateTicket(t *testing.T) {
 					return assert.EqualError(t, err, context.Canceled.Error())
 				},
 			},
-			"NotFound: Ticket is not found": {
+			"Internal: Ticket is not found": {
 				// setupFirestore // important
 				req: &ticketmgrv1.UpdateTicketRequest{
 					TicketId: baseTicket.TicketID,
 				},
 				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
-					return assert.ErrorContains(t, err, status.Error(codes.NotFound, "").Error())
-				},
-			},
-			"FailedPrecondition: Failed to unmarshal": {
-				setupFirestore: func(c *firestore.Client) error {
-					var (
-						bw      = c.BulkWriter(context.Background())
-						ref     = c.Doc(baseTicket.Path())
-						invalid = map[string]interface{}{
-							"Deadline": "invalid date",
-						}
-					)
-					if _, err := bw.Create(ref, invalid); err != nil {
-						return err
-					}
-					bw.End()
-					return nil
-				},
-				req: &ticketmgrv1.UpdateTicketRequest{
-					TicketId: baseTicket.TicketID,
-				},
-				wantErr: func(tt assert.TestingT, err error, i ...interface{}) bool {
-					return assert.ErrorContains(t, err, status.Error(codes.FailedPrecondition, "failed to unmarshal").Error())
+					return assert.ErrorContains(t, err, status.Error(codes.Internal, "failed to read").Error())
 				},
 			},
 			"InvalidArgument: Validation error": {
