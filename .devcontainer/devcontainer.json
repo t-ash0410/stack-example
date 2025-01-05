@@ -79,12 +79,6 @@
   },
   "containerEnv": {
     "SHELL": "/bin/zsh",
-    // Go application settings
-    "TICKET_MGR_PORT": "9080",
-    "TICKET_QUERIER_PORT": "9081",
-    "ACCOUNT_MGR_PORT": "9082",
-    "FIRESTORE_EMULATOR_HOST": "firestore:8200",
-    "FIRESTORE_PROJECT_ID": "dummy-project-id"
   },
   "forwardPorts": [
     3300
@@ -97,6 +91,9 @@
       "version": "latest"
     },
     "ghcr.io/marcozac/devcontainer-features/buf:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/direnv:1": {
       "version": "latest"
     }
   },
