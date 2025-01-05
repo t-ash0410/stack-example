@@ -1,5 +1,5 @@
+import { SLACK_CLIENT_ID } from '@frontend/config'
 import { localStorageKeys, pagePaths } from '@frontend/consts'
-import { useEnv } from '@frontend/env'
 import { useBff, useGetLocalStorage } from '@frontend/hooks'
 import { handleError } from '@frontend/util/handle-error'
 import { useState } from 'react'
@@ -7,7 +7,6 @@ import { useState } from 'react'
 const SLACK_BASE_URL = 'https://slack.com/openid/connect/authorize'
 
 export function useSlackSSOButton() {
-  const { SLACK_CLIENT_ID } = useEnv()
   const teamId = useGetLocalStorage(localStorageKeys.SLACK_TEAM_ID)
   const bff = useBff()
 
