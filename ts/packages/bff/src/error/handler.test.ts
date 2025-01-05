@@ -26,9 +26,7 @@ describe('errorHandler', () => {
 
   it('returns the error in the response when an HTTP exception is thrown', async () => {
     // Setup Hono
-    const app = new Hono()
-    app.onError(errorHandler)
-    app.get('/test', () => {
+    const app = new Hono().onError(errorHandler).get('/test', () => {
       throw new HTTPException(400)
     })
 
@@ -39,9 +37,7 @@ describe('errorHandler', () => {
 
   it('returns the 500 response when an unexpected exception is thrown', async () => {
     // Setup Hono
-    const app = new Hono()
-    app.onError(errorHandler)
-    app.get('/test', () => {
+    const app = new Hono().onError(errorHandler).get('/test', () => {
       throw new Error('some error')
     })
 

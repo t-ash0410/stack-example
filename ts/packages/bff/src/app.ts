@@ -10,19 +10,18 @@ import { secureHeaders } from 'hono/secure-headers'
 initLogger('info')
 
 const app = new Hono()
-app.use(
-  cors({
-    origin: CORS_ORIGIN,
-    credentials: true,
-  }),
-  // setupDefaultContext,
-  secureHeaders(),
-)
-app.use('*', except(['/health'], informationLog))
-// app.use('*', except(['/health', '/auth/*'], authN))
-app.onError(errorHandler)
-
-const routes = app.route('/health', healthRoute)
+  .use(
+    cors({
+      origin: CORS_ORIGIN,
+      credentials: true,
+    }),
+    // setupDefaultContext,
+    secureHeaders(),
+  )
+  .use('*', except(['/health'], informationLog))
+  // app.use('*', except(['/health', '/auth/*'], authN))
+  .onError(errorHandler)
+  .route('/health', healthRoute)
 
 // Run
 export default {
@@ -30,4 +29,4 @@ export default {
   port: BFF_PORT,
 }
 
-export type App = typeof routes
+export type App = typeof app
