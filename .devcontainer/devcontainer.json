@@ -78,27 +78,16 @@
     }
   },
   "containerEnv": {
-    "SHELL": "/bin/zsh",
-    // Go application settings
-    "TICKET_MGR_PORT": "9080",
-    "TICKET_QUERIER_PORT": "9081",
-    "ACCOUNT_MGR_PORT": "9082",
-    "FIRESTORE_EMULATOR_HOST": "firestore:8200",
-    "FIRESTORE_PROJECT_ID": "dummy-project-id"
+    "SHELL": "/bin/zsh"
   },
   "forwardPorts": [
     3300
   ],
   "features": {
-    "ghcr.io/devcontainers/features/go:1": {
-      "version": "latest"
-    },
-    "ghcr.io/shyim/devcontainers-features/bun:0": {
-      "version": "latest"
-    },
-    "ghcr.io/marcozac/devcontainer-features/buf:1": {
-      "version": "latest"
-    }
+    "ghcr.io/devcontainers/features/go": {},
+    "ghcr.io/shyim/devcontainers-features/bun": {},
+    "ghcr.io/marcozac/devcontainer-features/buf": {},
+    "ghcr.io/christophermacgown/devcontainer-features/direnv": {}
   },
   "onCreateCommand": ".devcontainer/on-create.sh",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
