@@ -7,10 +7,9 @@ import (
 	"testing"
 
 	"cloud.google.com/go/firestore"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/stretchr/testify/assert"
 
 	"github.com/t-ash0410/stack-example/go/lib/ctxtest"
 	"github.com/t-ash0410/stack-example/go/lib/firestoretest"
