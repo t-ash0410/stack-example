@@ -1,5 +1,6 @@
 {
   "name": "@stack-example/grpc",
+  "module": "index.ts",
   "type": "module",
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3"

@@ -17,6 +17,7 @@
         "@connectrpc/connect": "^2.0.0",
         "@connectrpc/connect-node": "^2.0.0",
         "@hono/zod-validator": "^0.4.2",
+        "@stack-example/grpc": "packages/grpc",
         "hono": "^4.6.15",
         "jose": "^5.9.6",
         "neverthrow": "^8.1.1",
@@ -83,7 +84,7 @@
 
     "atomic-sleep": ["atomic-sleep@1.0.0", "", {}, "sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ=="],
 
-    "bff": ["bff@workspace:packages/bff", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@hono/zod-validator": "^0.4.2", "hono": "^4.6.15", "jose": "^5.9.6", "neverthrow": "^8.1.1", "pino": "^9.6.0", "zod": "^3.24.1" }, "devDependencies": { "@biomejs/biome": "^1.9.4", "@types/bun": "latest" }, "peerDependencies": { "typescript": "^5.0.0" } }],
+    "bff": ["bff@workspace:packages/bff", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@hono/zod-validator": "^0.4.2", "@stack-example/grpc": "packages/grpc", "hono": "^4.6.15", "jose": "^5.9.6", "neverthrow": "^8.1.1", "pino": "^9.6.0", "zod": "^3.24.1" }, "devDependencies": { "@biomejs/biome": "^1.9.4", "@types/bun": "latest" }, "peerDependencies": { "typescript": "^5.0.0" } }],
 
     "bun-types": ["bun-types@1.1.37", "", { "dependencies": { "@types/node": "~20.12.8", "@types/ws": "~8.5.10" } }, "sha512-C65lv6eBr3LPJWFZ2gswyrGZ82ljnH8flVE03xeXxKhi2ZGtFiO4isRKTKnitbSqtRAcaqYSR6djt1whI66AbA=="],
 
