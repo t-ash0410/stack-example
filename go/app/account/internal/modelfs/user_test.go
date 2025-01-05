@@ -12,6 +12,8 @@ import (
 var (
 	baseUser = &modelfs.User{
 		UserID:      "b28c4f54-1a6c-4969-b3e1-e95bb794b049",
+		CreatedBy:   "a80ebbfe-f46e-4dd1-b1c8-d39dc91b5d7e",
+		UpdatedBy:   "a80ebbfe-f46e-4dd1-b1c8-d39dc91b5d7e",
 		Email:       "john-doe@stack-example.tash0410.com",
 		Name:        "John Doe",
 		SlackUserID: "UXXXXXXX",
