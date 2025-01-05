@@ -4,6 +4,7 @@ import {
   SLACK_CLIENT_SECRET,
   SLACK_SSO_REDIRECT_URL,
 } from '@bff/env'
+import { createJWT, setJWTCookie } from '@bff/jwt'
 import type { DefaultEnv, ValidatorInput } from '@bff/types'
 import { zValidator } from '@hono/zod-validator'
 import type { Context } from 'hono'
@@ -39,20 +40,20 @@ const handler = async (
     throw res.error
   }
 
-  // const now = new Date()
-  // const jwt = await createJWT({
-  //   userId: res.value.userId,
-  //   now,
-  // })
-  // setJWTCookie({
-  //   ctx: c,
-  //   jwt,
-  //   now,
-  // })
+  const now = new Date()
+  const jwt = await createJWT({
+    userId: res.value.userId,
+    now,
+  })
+  setJWTCookie({
+    ctx: c,
+    jwt,
+    now,
+  })
 
   return c.json({
-    // slackTeamId: userRes.value.teamId,
-    // jwt,
+    jwt,
+    slackTeamId: res.value.slackTeamId,
   })
 }
 

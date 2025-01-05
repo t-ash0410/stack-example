@@ -9,10 +9,12 @@ import {
   spyOn,
 } from 'bun:test'
 import {
+  JWT_KEY,
   SLACK_CLIENT_ID,
   SLACK_CLIENT_SECRET,
   SLACK_SSO_REDIRECT_URL,
 } from '@bff/env'
+import { createJWT } from '@bff/jwt'
 import { initHonoApp, mockAccountMgrServiceClient } from '@bff/testutil'
 import { create } from '@bufbuild/protobuf'
 import { SlackSSOResponseSchema } from '@stack-example/grpc'
@@ -108,7 +110,6 @@ describe('GET /oidc/slack', async () => {
         }),
       ),
     )
-    spyOn(crypto, 'randomUUID').mockImplementation(() => 'uuid-u-u-i-d')
     spyOn(mockAccountMgrServiceClient, 'slackSSO').mockResolvedValue(
       create(SlackSSOResponseSchema, {
         userId: 'user-001',
@@ -136,15 +137,19 @@ describe('GET /oidc/slack', async () => {
       },
     })
 
+    const jwt = await createJWT({
+      userId: 'user-001',
+      now,
+    })
+
     expect(res.status).toBe(200)
-    // expect(await res.json()).toEqual({
-    //   slackTeamId: 'TXXXXXXX',
-    //   jwt,
-    // })
-    // expect(res.headers.get('set-cookie')).toBe(
-    //   `${deleteCookie}, ${JWT_KEY}=${jwt}; Path=/; Expires=Wed, 01 Jan 2020 03:00:00 GMT; HttpOnly; Secure; SameSite=Strict`,
-    // )
-    expect(res.headers.get('set-cookie')).toBe(`${deleteCookie}`)
+    expect(await res.json()).toEqual({
+      jwt,
+      slackTeamId: 'TXXXXXXX',
+    })
+    expect(res.headers.get('set-cookie')).toBe(
+      `${deleteCookie}, ${JWT_KEY}=${jwt}; Path=/; Expires=Wed, 01 Jan 2020 03:00:00 GMT; HttpOnly; Secure; SameSite=Strict`,
+    )
 
     expect(global.fetch).toHaveBeenCalledTimes(1)
     expect(global.fetch).toHaveBeenNthCalledWith(1, SLACK_SSO_URL, {
