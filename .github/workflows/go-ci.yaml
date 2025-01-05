@@ -36,7 +36,7 @@ jobs:
           path: ${{ matrix.docker-cache-path }}
           key: docker-image-cache-${{ hashFiles('./docker/docker-compose.ci.yaml') }}
 
-      # Load firestore mock
+      # Setup firestore emulator
       - name: Load firestore image if exists
         if: steps.docker-image-cache.outputs.cache-hit == 'true'
         run: docker load --input ${{ matrix.docker-cache-path }}/firestore.tar
