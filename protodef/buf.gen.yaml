@@ -11,7 +11,7 @@ plugins:
   - remote: buf.build/grpc/go
     out: ../go/api
     opt: paths=source_relative
-  - remote: buf.build/connectrpc/es:v1.5.0
+  - remote: buf.build/connectrpc/es
     out: ../ts/packages/grpc/src
-  - remote: buf.build/bufbuild/es:v1.10.0
+  - remote: buf.build/bufbuild/es
     out: ../ts/packages/grpc/src

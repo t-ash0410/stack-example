@@ -5,9 +5,7 @@ import { informationLog } from './middleware'
 describe('informationLog', () => {
   it('logs the request when it arrives', async () => {
     // Setup Hono
-    const app = new Hono()
-    app.use(informationLog)
-    app.get('/test', (c) => {
+    const app = new Hono().use(informationLog).get('/test', (c) => {
       return c.text('ok!')
     })
 
