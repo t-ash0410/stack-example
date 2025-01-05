@@ -1,5 +1,5 @@
+import { getLogger } from '@bff/log'
 import { createMiddleware } from 'hono/factory'
-import { getLogger } from './logger'
 
 export const informationLog = createMiddleware(async (c, next) => {
   const log = getLogger()

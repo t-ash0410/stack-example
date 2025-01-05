@@ -1,6 +1,7 @@
 import { BFF_PORT, CORS_ORIGIN } from '@bff/env'
 import { errorHandler } from '@bff/error'
-import { informationLog, initLogger } from '@bff/log'
+import { initLogger } from '@bff/log'
+import { informationLog } from '@bff/middleware'
 import { healthRoute } from '@bff/routes'
 import { Hono } from 'hono'
 import { except } from 'hono/combine'

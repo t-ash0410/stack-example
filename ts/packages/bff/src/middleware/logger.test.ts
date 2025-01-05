@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Hono } from 'hono'
-import { informationLog } from './middleware'
+import { informationLog } from './logger'
 
 describe('informationLog', () => {
   it('logs the request when it arrives', async () => {
