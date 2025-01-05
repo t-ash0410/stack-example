@@ -7,7 +7,7 @@ on:
       - .github/workflows/ts-bff-ci.yaml
   push:
     branches:
-      - master
+      - main
     paths:
       - ts/packages/bff/**
       - .github/workflows/ts-bff-ci.yaml
