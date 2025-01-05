@@ -6,13 +6,27 @@
   "customizations": {
     "vscode": {
       "settings": {
-        // Editor
         "editor.tabSize": 2,
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "biomejs.biome",
         "editor.codeActionsOnSave": {
           "quickfix.biome": "explicit",
           "source.organizeImports.biome": "explicit"
+        },
+        "biome.lspBin": "ts/node_modules/@biomejs/cli-linux-x64/biome",
+        "[javascript]": {
+          "editor.defaultFormatter": "biomejs.biome"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "biomejs.biome"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "biomejs.biome"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "biomejs.biome"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[toml]": {
           "editor.defaultFormatter": "tamasfe.even-better-toml"
@@ -32,7 +46,6 @@
           "FIRESTORE_EMULATOR_HOST": "firestore-test:8200"
         },
         "files.insertFinalNewline": true,
-        // Buf
         "buf.binaryPath": "/usr/local/bin/buf"
       },
       "extensions": [
@@ -67,9 +80,9 @@
   "containerEnv": {
     "SHELL": "/bin/zsh",
     // Go application settings
-    "TICKET_MGR_PORT": "8080",
-    "TICKET_QUERIER_PORT": "8081",
-    "ACCOUNT_MGR_PORT": "8082",
+    "TICKET_MGR_PORT": "9080",
+    "TICKET_QUERIER_PORT": "9081",
+    "ACCOUNT_MGR_PORT": "9082",
     "FIRESTORE_EMULATOR_HOST": "firestore:8200",
     "FIRESTORE_PROJECT_ID": "dummy-project-id"
   },
