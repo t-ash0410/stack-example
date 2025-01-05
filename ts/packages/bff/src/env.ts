@@ -1,5 +1,5 @@
 const {
-  PORT,
+  BFF_PORT,
   CORS_ORIGIN,
   DOMAIN,
   JWT_SECRET,
@@ -16,7 +16,7 @@ const {
   TICKET_QUERIER_SERVICE_ENDPOINT,
 } = process.env
 
-const portAsNumber = PORT ? Number(PORT) : 8080
+const portAsNumber = BFF_PORT ? Number(BFF_PORT) : 8080
 const corsOrigin = CORS_ORIGIN || 'https://localhost:3000'
 const jwtKey = JWT_KEY || 'jwt'
 const jwtSecret = JWT_SECRET || 'secret'
@@ -35,7 +35,7 @@ const accountMgrServiceEndpoint =
   ACCOUNT_MGR_SERVICE_ENDPOINT || 'http://localhost:9082'
 
 export {
-  portAsNumber as PORT,
+  portAsNumber as BFF_PORT,
   corsOrigin as CORS_ORIGIN,
   DOMAIN,
   jwtSecret as JWT_SECRET,
