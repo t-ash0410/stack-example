@@ -78,24 +78,16 @@
     }
   },
   "containerEnv": {
-    "SHELL": "/bin/zsh",
+    "SHELL": "/bin/zsh"
   },
   "forwardPorts": [
     3300
   ],
   "features": {
-    "ghcr.io/devcontainers/features/go:1": {
-      "version": "latest"
-    },
-    "ghcr.io/shyim/devcontainers-features/bun:0": {
-      "version": "latest"
-    },
-    "ghcr.io/marcozac/devcontainer-features/buf:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/direnv:1": {
-      "version": "latest"
-    }
+    "ghcr.io/devcontainers/features/go": {},
+    "ghcr.io/shyim/devcontainers-features/bun": {},
+    "ghcr.io/marcozac/devcontainer-features/buf": {},
+    "ghcr.io/christophermacgown/devcontainer-features/direnv": {}
   },
   "onCreateCommand": ".devcontainer/on-create.sh",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
