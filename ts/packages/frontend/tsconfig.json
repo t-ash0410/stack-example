@@ -15,9 +15,7 @@
     "incremental": true,
     "paths": {
       "@frontend/*": ["./src/*"],
-      "@bff/*": [
-        "../../node_modules/@stack-example/bff/src/*"
-      ]
+      "@bff/*": ["../../node_modules/@stack-example/bff/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.mjs"],
