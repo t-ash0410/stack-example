@@ -100,7 +100,5 @@ func TestServer_Run(t *testing.T) {
 		assert.NoError(t, err)
 
 		cancel()
-
-		time.Sleep(10 * time.Millisecond)
 	})
 }
