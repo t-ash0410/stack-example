@@ -3,13 +3,13 @@ name: TS/BFF - CI
 on:
   pull_request:
     paths:
-      - ts/packages/bff/**
+      - ts/web/packages/bff/**
       - .github/workflows/ts-bff-ci.yaml
   push:
     branches:
       - main
     paths:
-      - ts/packages/bff/**
+      - ts/web/packages/bff/**
       - .github/workflows/ts-bff-ci.yaml
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./ts/packages/bff
+        working-directory: ./ts/web/packages/bff
     permissions:
       contents: read
     steps:
