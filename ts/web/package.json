@@ -1,5 +1,5 @@
 {
-  "name": "@stack-example/ts",
+  "name": "@stack-example/web",
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

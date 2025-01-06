@@ -3,13 +3,13 @@ name: TS/Frontend - CI
 on:
   pull_request:
     paths:
-      - ts/packages/frontend/**
+      - ts/web/packages/frontend/**
       - .github/workflows/ts-frontend-ci.yaml
   push:
     branches:
       - main
     paths:
-      - ts/packages/frontend/**
+      - ts/web/packages/frontend/**
       - .github/workflows/ts-frontend-ci.yaml
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./ts/packages/frontend
+        working-directory: ./ts/web/packages/frontend
     permissions:
       contents: read
     steps:
@@ -34,7 +34,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ts/packages/frontend/.next/cache
+            ts/web/packages/frontend/.next/cache
           key: ${{ runner.os }}-ts-frontend-next
 
       - name: Lint
