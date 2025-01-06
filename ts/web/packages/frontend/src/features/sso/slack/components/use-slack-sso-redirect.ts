@@ -8,10 +8,15 @@ export function useSlackSSORedirect() {
   const router = useRouter()
 
   const params = useSearchParams()
-  const code = params.get('code') || ''
-  const state = params.get('state') || ''
-
-  const { data, isLoading, isError } = useGetSSOSlack({ code, state })
+  const code = params.get('code')
+  const state = params.get('state')
+  const { data, isLoading, isError } = useGetSSOSlack(
+    {
+      code: code || '',
+      state: state || '',
+    },
+    !!code && !!state,
+  )
   useEffect(() => {
     if (isLoading) return
     if (isError) {
