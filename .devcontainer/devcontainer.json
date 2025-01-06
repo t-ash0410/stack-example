@@ -12,7 +12,7 @@
           "quickfix.biome": "explicit",
           "source.organizeImports.biome": "explicit"
         },
-        "biome.lspBin": "ts/node_modules/@biomejs/cli-linux-x64/biome",
+        "biome.lspBin": "ts/web/node_modules/@biomejs/cli-linux-x64/biome",
         "[javascript]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
