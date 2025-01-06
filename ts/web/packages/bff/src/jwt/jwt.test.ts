@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { JWT_KEY } from '@bff/env'
 import { initHonoApp } from '@bff/testutil'
-import { createJWT, setJWTCookie } from './jwt'
+import { createJWT, setJWTCookie, verifyJWTCookie } from './jwt'
 
 describe('createJWT', async () => {
   it('returns jwt', async () => {
@@ -31,5 +31,37 @@ describe('setJWTCookie', async () => {
     expect(res.headers.get('set-cookie')).toBe(
       `${JWT_KEY}=jwt; Path=/; Expires=Wed, 01 Jan 2020 03:00:00 GMT; HttpOnly; Secure; SameSite=Strict`,
     )
+  })
+})
+
+describe('verifyJWTCookie', async () => {
+  it('returns valid payload', async () => {
+    const app = initHonoApp().get('/', async (c) => {
+      const ret = await verifyJWTCookie({
+        ctx: c,
+      })
+      if (ret.isErr()) {
+        return c.json({ err: ret.error }, 500)
+      }
+      return c.json(ret.value)
+    })
+
+    const now = new Date()
+    const jwt = await createJWT({
+      userId: 'user-001',
+      now: now,
+    })
+    const res = await app.request('/', {
+      headers: {
+        Cookie: `${JWT_KEY}=${jwt}`,
+      },
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      sub: 'user-001',
+      iat: Math.floor(now.getTime() / 1000),
+      exp: Math.floor(now.getTime() / 1000) + 3 * 60 * 60,
+    })
   })
 })

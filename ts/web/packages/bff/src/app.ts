@@ -7,7 +7,7 @@ import {
 } from '@bff/env'
 import { errorHandler } from '@bff/error'
 import { initLogger } from '@bff/log'
-import { informationLog, initContext } from '@bff/middleware'
+import { authN, informationLog, initContext } from '@bff/middleware'
 import { authRoute, healthRoute } from '@bff/routes'
 import { Hono } from 'hono'
 import { except } from 'hono/combine'
@@ -26,7 +26,7 @@ const app = new Hono()
     secureHeaders(),
   )
   .use('*', except(['/health'], informationLog))
-  // app.use('*', except(['/health', '/auth/*'], authN))
+  .use('*', except(['/health', '/auth/*'], authN))
   .onError(errorHandler)
   .route('/health', healthRoute)
   .route('/auth', authRoute)

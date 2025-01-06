@@ -15,6 +15,16 @@ export type DefaultEnv = {
   }
 }
 
+export type ActiveUser = {
+  userId: string
+}
+
+export type AuthNEnv = DefaultEnv & {
+  Variables: Pick<DefaultEnv, 'Variables'> & {
+    activeUser: ActiveUser
+  }
+}
+
 export type ValidatorInput<T> = T extends MiddlewareHandler<
   Env,
   string,
