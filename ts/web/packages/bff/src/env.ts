@@ -14,6 +14,11 @@ const {
   ACCOUNT_MGR_SERVICE_ENDPOINT,
   TICKET_MGR_SERVICE_ENDPOINT,
   TICKET_QUERIER_SERVICE_ENDPOINT,
+
+  // develop
+  USE_HTTPS,
+  TLS_CERT_PATH,
+  TLS_KEY_PATH,
 } = process.env
 
 const portAsNumber = BFF_PORT ? Number(BFF_PORT) : 8080
@@ -34,6 +39,10 @@ const ticketQuerierServiceEndpoint =
 const accountMgrServiceEndpoint =
   ACCOUNT_MGR_SERVICE_ENDPOINT || 'http://localhost:9082'
 
+const useHttps = USE_HTTPS === 'true'
+const tlsCertPath = TLS_CERT_PATH || ''
+const tlsKeyPath = TLS_KEY_PATH || ''
+
 export {
   portAsNumber as BFF_PORT,
   corsOrigin as CORS_ORIGIN,
@@ -46,4 +55,7 @@ export {
   accountMgrServiceEndpoint as ACCOUNT_MGR_SERVICE_ENDPOINT,
   ticketMgrServiceEndpoint as TICKET_MGR_SERVICE_ENDPOINT,
   ticketQuerierServiceEndpoint as TICKET_QUERIER_SERVICE_ENDPOINT,
+  useHttps as USE_HTTPS,
+  tlsCertPath as TLS_CERT_PATH,
+  tlsKeyPath as TLS_KEY_PATH,
 }
