@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https --experimental-https-key=$TLS_KEY_PATH --experimental-https-cert=$TLS_CERT_PATH",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
