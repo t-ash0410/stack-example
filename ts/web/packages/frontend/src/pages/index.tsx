@@ -1,3 +1,5 @@
-export default function Home() {
-  return <div>Hello</div>
+import { RootRedirect } from '@frontend/features/root/components'
+
+export default () => {
+  return <RootRedirect />
 }
