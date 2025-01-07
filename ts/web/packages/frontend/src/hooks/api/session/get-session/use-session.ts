@@ -9,7 +9,15 @@ export const useGetSession = () => {
     queryKey: [...sessionQueryKeys.all],
     queryFn: async () => {
       const res = await bff.session.$get()
-      if (!res.ok) handleError('システムエラー')
+      if (!res.ok) {
+        if (res.status === 401) {
+          return {
+            status: res.status,
+          }
+        }
+        handleError(new Error(await res.text()))
+        return
+      }
       return {
         status: res.status,
         body: await res.json(),

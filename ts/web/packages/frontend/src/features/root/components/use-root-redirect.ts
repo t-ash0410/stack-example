@@ -13,8 +13,9 @@ export function useRootRedirect() {
       handleError(new Error('エラーが発生しました'))
       return
     }
-    if (data?.status === 401) {
+    if (data.status === 401) {
       router.push('/signin')
+      return
     }
     router.push('/tickets')
   }, [router, data, isLoading, isError])
