@@ -7,10 +7,18 @@ import {
   mock,
   spyOn,
 } from 'bun:test'
-import { initHonoApp, mockTicketQuerierServiceClient } from '@bff/testutil'
+import {
+  activeUser,
+  initHonoApp,
+  mockTicketMgrServiceClient,
+  mockTicketQuerierServiceClient,
+} from '@bff/testutil'
 import { create } from '@bufbuild/protobuf'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
-import { GetTicketByIdResponseSchema } from '@stack-example/grpc'
+import {
+  GetTicketByIdResponseSchema,
+  UpdateTicketResponseSchema,
+} from '@stack-example/grpc'
 import { ticketDetailRoute } from './route'
 
 describe('GET /', async () => {
@@ -133,5 +141,100 @@ describe('GET /', async () => {
     expect(mockTicketQuerierServiceClient.getTicketById).toHaveBeenCalledTimes(
       2,
     )
+  })
+})
+
+describe('PUT /', async () => {
+  beforeEach(() => {
+    spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockResolvedValue(
+      create(GetTicketByIdResponseSchema, {
+        ticket: {
+          ticketId: 'ticket-001',
+          createdAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+          updatedAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+          createdBy: 'user-001',
+          title: 'Some Ticket',
+          description: 'Some ticket description.',
+          deadline: timestampFromDate(new Date('2020-01-10T00:00:00.000Z')),
+        },
+      }),
+    )
+    spyOn(mockTicketMgrServiceClient, 'updateTicket').mockResolvedValue(
+      create(UpdateTicketResponseSchema, {}),
+    )
+  })
+
+  afterEach(() => {
+    mock.restore()
+  })
+
+  it('returns 200 response', async () => {
+    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+
+    const res = await app.request('/some-ticket', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: 'Some Ticket',
+        description: 'Some ticket description.',
+        deadline: new Date('2020-01-01T00:00:00.000Z'),
+      }),
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toStrictEqual({})
+
+    expect(mockTicketMgrServiceClient.updateTicket).toHaveBeenCalledTimes(1)
+    expect(mockTicketMgrServiceClient.updateTicket).toHaveBeenCalledWith({
+      ticketId: 'some-ticket',
+      requestedBy: activeUser.userId,
+      title: 'Some Ticket',
+      description: 'Some ticket description.',
+      deadline: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+    })
+  })
+
+  it('returns 400 error if request validation fails', async () => {
+    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+
+    const res = await app.request('/some-ticket', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // important
+      }),
+    })
+
+    expect(res.status).toBe(400)
+
+    expect(mockTicketMgrServiceClient.updateTicket).not.toHaveBeenCalled()
+  })
+
+  it('returns 500 error if ticket update fails', async () => {
+    spyOn(mockTicketMgrServiceClient, 'updateTicket').mockRejectedValue(
+      new Error('Some error'), // important
+    )
+
+    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+
+    const res = await app.request('/some-ticket', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: 'Some Ticket',
+        description: 'Some ticket description.',
+        deadline: new Date('2020-01-01T00:00:00.000Z'),
+      }),
+    })
+
+    expect(res.status).toBe(500)
+
+    expect(mockTicketMgrServiceClient.updateTicket).toHaveBeenCalledTimes(1)
   })
 })
