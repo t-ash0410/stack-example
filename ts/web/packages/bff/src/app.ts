@@ -8,7 +8,7 @@ import {
 import { errorHandler } from '@bff/error'
 import { initLogger } from '@bff/log'
 import { authN, informationLog, initContext } from '@bff/middleware'
-import { authRoute, healthRoute } from '@bff/routes'
+import { authRoute, healthRoute, ticketsRoute } from '@bff/routes'
 import { Hono } from 'hono'
 import { except } from 'hono/combine'
 import { cors } from 'hono/cors'
@@ -30,6 +30,7 @@ const app = new Hono()
   .onError(errorHandler)
   .route('/health', healthRoute)
   .route('/auth', authRoute)
+  .route('/tickets', ticketsRoute)
 
 // Run
 export default {
