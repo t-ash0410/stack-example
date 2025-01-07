@@ -1,0 +1,15 @@
+{
+  "display_information": {
+    "name": "Stack Example Authenticator",
+    "description": "App for Slack SSO",
+    "background_color": "#737f9e"
+  },
+  "oauth_config": {
+    "redirect_urls": ["https://localhost:3000/sso/slack"]
+  },
+  "settings": {
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}
