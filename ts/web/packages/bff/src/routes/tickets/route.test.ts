@@ -10,11 +10,15 @@ import {
 import {
   activeUser,
   initHonoApp,
+  mockTicketMgrServiceClient,
   mockTicketQuerierServiceClient,
 } from '@bff/testutil'
 import { create } from '@bufbuild/protobuf'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
-import { QueryTicketsResponseSchema } from '@stack-example/grpc'
+import {
+  CreateTicketResponseSchema,
+  QueryTicketsResponseSchema,
+} from '@stack-example/grpc'
 import { ticketsRoute } from './route'
 
 describe('GET /', async () => {
@@ -98,5 +102,92 @@ describe('GET /', async () => {
     expect(res.status).toBe(500)
 
     expect(mockTicketQuerierServiceClient.queryTickets).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('POST /', async () => {
+  beforeEach(() => {
+    spyOn(mockTicketMgrServiceClient, 'createTicket').mockResolvedValue(
+      create(CreateTicketResponseSchema, {
+        ticketId: 'ticket-001',
+      }),
+    )
+  })
+
+  afterEach(() => {
+    mock.restore()
+  })
+
+  it('returns a ticket id', async () => {
+    const app = initHonoApp().route('', ticketsRoute)
+
+    const res = await app.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: 'Some Ticket',
+        description: 'Some ticket description.',
+        deadline: new Date('2020-01-01T00:00:00.000Z'),
+      }),
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toMatchInlineSnapshot(`
+{
+  "ticketId": "ticket-001",
+}
+`)
+
+    expect(mockTicketMgrServiceClient.createTicket).toHaveBeenCalledTimes(1)
+    expect(mockTicketMgrServiceClient.createTicket).toHaveBeenCalledWith({
+      requestedBy: activeUser.userId,
+      title: 'Some Ticket',
+      description: 'Some ticket description.',
+      deadline: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+    })
+  })
+
+  it('returns 400 error if request validation fails', async () => {
+    const app = initHonoApp().route('', ticketsRoute)
+
+    const res = await app.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // important
+      }),
+    })
+
+    expect(res.status).toBe(400)
+
+    expect(mockTicketMgrServiceClient.createTicket).not.toHaveBeenCalled()
+  })
+
+  it('returns 500 error if ticket creation fails', async () => {
+    spyOn(mockTicketMgrServiceClient, 'createTicket').mockRejectedValue(
+      new Error('Some error'), // important
+    )
+
+    const app = initHonoApp().route('', ticketsRoute)
+
+    const res = await app.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: 'Some Ticket',
+        description: 'Some ticket description.',
+        deadline: new Date('2020-01-01T00:00:00.000Z'),
+      }),
+    })
+
+    expect(res.status).toBe(500)
+
+    expect(mockTicketMgrServiceClient.createTicket).toHaveBeenCalledTimes(1)
   })
 })
