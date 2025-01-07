@@ -121,15 +121,18 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
                 setDate={(newDate) => handleEditDeadline(ticket, newDate)}
               />
             ) : (
-              <span onClick={() => setEditingDeadline(ticket.id)}>
+              <span
+                onClick={() => setEditingDeadline(ticket.id)}
+                suppressHydrationWarning={true}
+              >
                 {formatDate(ticket.deadline)}
               </span>
             )}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
             作成日時: {formatDate(ticket.createdAt)}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
             更新日時: {formatDate(ticket.updatedAt)}
           </p>
         </div>
