@@ -1,6 +1,6 @@
 import { errorHandler } from '@bff/error'
 import { getLogger } from '@bff/log'
-import type { DefaultEnv } from '@bff/types/hono'
+import type { ActiveUser, AuthNEnv } from '@bff/types/hono'
 import { createClient, createRouterTransport } from '@connectrpc/connect'
 import {
   AccountMgrService,
@@ -30,13 +30,18 @@ const mockTicketQuerierServiceClient = createClient(
   }),
 )
 
+const activeUser: ActiveUser = {
+  userId: 'user-001',
+}
+
 const initHonoApp = () =>
-  new Hono<DefaultEnv>()
+  new Hono<AuthNEnv>()
     .use(async (c, next) => {
       c.set('logger', getLogger())
       c.set('accountMgrServiceClient', mockAccountMgrServiceClient)
       c.set('ticketMgrServiceClient', mockTicketMgrServiceClient)
       c.set('ticketQuerierServiceClient', mockTicketQuerierServiceClient)
+      c.set('activeUser', activeUser)
       await next()
     })
     .onError(errorHandler)
@@ -46,4 +51,5 @@ export {
   mockAccountMgrServiceClient,
   mockTicketMgrServiceClient,
   mockTicketQuerierServiceClient,
+  activeUser,
 }
