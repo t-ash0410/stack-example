@@ -16,6 +16,7 @@ import {
 import { create } from '@bufbuild/protobuf'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 import {
+  DeleteTicketResponseSchema,
   GetTicketByIdResponseSchema,
   UpdateTicketResponseSchema,
 } from '@stack-example/grpc'
@@ -236,5 +237,63 @@ describe('PUT /', async () => {
     expect(res.status).toBe(500)
 
     expect(mockTicketMgrServiceClient.updateTicket).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('DELETE /', async () => {
+  beforeEach(() => {
+    spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockResolvedValue(
+      create(GetTicketByIdResponseSchema, {
+        ticket: {
+          ticketId: 'ticket-001',
+          createdAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+          updatedAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
+          createdBy: 'user-001',
+          title: 'Some Ticket',
+          description: 'Some ticket description.',
+          deadline: timestampFromDate(new Date('2020-01-10T00:00:00.000Z')),
+        },
+      }),
+    )
+    spyOn(mockTicketMgrServiceClient, 'deleteTicket').mockResolvedValue(
+      create(DeleteTicketResponseSchema, {}),
+    )
+  })
+
+  afterEach(() => {
+    mock.restore()
+  })
+
+  it('returns 200 response', async () => {
+    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+
+    const res = await app.request('/some-ticket', {
+      method: 'DELETE',
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toStrictEqual({})
+
+    expect(mockTicketMgrServiceClient.deleteTicket).toHaveBeenCalledTimes(1)
+    expect(mockTicketMgrServiceClient.deleteTicket).toHaveBeenNthCalledWith(1, {
+      ticketId: 'some-ticket',
+    })
+  })
+
+  it('returns 500 error if ticket deletion fails', async () => {
+    const called = false
+    spyOn(mockTicketMgrServiceClient, 'deleteTicket').mockRejectedValue(
+      new Error('Some error'),
+    )
+
+    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+
+    const res = await app.request('/some-ticket', {
+      method: 'DELETE',
+    })
+
+    expect(res.status).toBe(500)
+
+    expect(mockTicketMgrServiceClient.deleteTicket).toHaveBeenCalledTimes(1)
   })
 })
