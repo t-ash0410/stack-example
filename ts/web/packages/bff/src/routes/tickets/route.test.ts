@@ -86,7 +86,7 @@ describe('GET /', async () => {
 
   it('returns 500 error if the ticket list fails to be retrieved', async () => {
     spyOn(mockTicketQuerierServiceClient, 'queryTickets').mockRejectedValue(
-      new Error('Some error'),
+      new Error('Some error'), // important
     )
 
     const app = initHonoApp().route('', ticketsRoute)
