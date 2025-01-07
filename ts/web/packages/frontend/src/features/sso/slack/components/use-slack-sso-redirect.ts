@@ -18,16 +18,14 @@ export function useSlackSSORedirect() {
     !!code && !!state,
   )
   useEffect(() => {
-    if (isLoading) return
+    if (isLoading || !data) return
     if (isError) {
       handleError(new Error('サインインに失敗しました'))
       router.push('/')
       return
     }
 
-    const slackTeamId = data?.slackTeamId || ''
-    localStorage.setItem(localStorageKeys.SLACK_TEAM_ID, slackTeamId)
-
+    localStorage.setItem(localStorageKeys.SLACK_TEAM_ID, data.slackTeamId)
     router.push('/')
   }, [router, data, isLoading, isError])
 }

@@ -1,5 +1,5 @@
 import { SigninForm } from '@frontend/features/signin'
 
-export default function Signin() {
+export default () => {
   return <SigninForm />
 }
