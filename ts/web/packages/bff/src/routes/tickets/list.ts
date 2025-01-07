@@ -1,5 +1,5 @@
+import { convertTicketToResponse } from '@bff/grpc/ticket'
 import type { AuthNEnv } from '@bff/types'
-import { convertTicketToResponse } from '@bff/util/ticket'
 import type { QueryTicketsResponse } from '@stack-example/grpc'
 import type { Context } from 'hono'
 import { ResultAsync, ok } from 'neverthrow'
