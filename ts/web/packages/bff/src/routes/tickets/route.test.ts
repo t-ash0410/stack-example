@@ -57,7 +57,26 @@ describe('GET /', async () => {
     })
 
     expect(res.status).toBe(200)
-    expect(await res.json()).toMatchSnapshot()
+    expect(await res.json()).toMatchInlineSnapshot(`
+[
+  {
+    "createdAt": "2020-01-01T00:00:00.000Z",
+    "deadline": "2020-01-10T00:00:00.000Z",
+    "description": "Some ticket description.",
+    "ticketId": "ticket-001",
+    "title": "Some Ticket",
+    "updatedAt": "2020-01-01T00:00:00.000Z",
+  },
+  {
+    "createdAt": "2020-01-01T00:00:00.000Z",
+    "deadline": "2020-01-10T00:00:00.000Z",
+    "description": "Foo baa",
+    "ticketId": "ticket-002",
+    "title": "Ticket 2",
+    "updatedAt": "2020-01-01T00:00:00.000Z",
+  },
+]
+`)
 
     expect(mockTicketQuerierServiceClient.queryTickets).toHaveBeenCalledTimes(1)
     expect(mockTicketQuerierServiceClient.queryTickets).toHaveBeenCalledWith({
