@@ -29,6 +29,7 @@ export const EditableTextField = ({
         onChange={(e) => setEditedValue(e.target.value)}
         onBlur={handleSave}
         autoFocus
+        className="w-full"
       />
     )
   }

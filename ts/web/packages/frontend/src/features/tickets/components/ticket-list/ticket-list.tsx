@@ -60,7 +60,7 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
       {tickets.map((ticket) => (
         <div key={ticket.id} className="bg-white p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-lg font-semibold w-full">
               <EditableTextField
                 value={ticket.title}
                 onSave={(value) => handleEditField(ticket, 'title', value)}
@@ -115,7 +115,7 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
             />
           </div>
           <p className="text-sm text-gray-500">
-            期限:
+            期限:&nbsp;
             <EditableDateTimeField
               value={ticket.deadline}
               onSave={(value) => handleEditDeadline(ticket, value)}
