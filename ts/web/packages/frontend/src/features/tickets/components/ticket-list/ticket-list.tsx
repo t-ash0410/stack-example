@@ -1,5 +1,9 @@
 import { Button, TableSkeleton } from '@frontend/components'
-import { useCreateTicket, useListTickets } from '@frontend/hooks/api/ticket'
+import {
+  useCreateTicket,
+  useListTickets,
+  useUpdateTicket,
+} from '@frontend/hooks/api/ticket'
 import { formatDate } from '@frontend/util/date'
 import { handleError } from '@frontend/util/handle-error'
 import { useQueryClient } from '@tanstack/react-query'
@@ -12,9 +16,9 @@ export const TicketList = () => {
   const queryClient = useQueryClient()
   const { data, isLoading, error } = useListTickets()
 
+  // Create
   const createMutation = useCreateTicket(queryClient)
   const [isCreating, setIsCreating] = useState(false)
-
   const handleCreateTicket = (newTicket: {
     title: string
     description: string
@@ -27,10 +31,34 @@ export const TicketList = () => {
     setIsCreating(false)
   }
 
-  const handleEditTitle = (id: string, value: string) => {}
-  const handleEditDescription = (id: string, value: string) => {}
-  const handleEditDeadline = (id: string, newDate: Date) => {}
+  // Update
+  const updateMutation = useUpdateTicket(queryClient)
+  const handleEditTitle = (id: string, value: string) => {
+    updateMutation.mutate({
+      ticketId: id,
+      body: {
+        title: value,
+      },
+    })
+  }
+  const handleEditDescription = (id: string, value: string) => {
+    updateMutation.mutate({
+      ticketId: id,
+      body: {
+        description: value,
+      },
+    })
+  }
+  const handleEditDeadline = (id: string, value: Date) => {
+    updateMutation.mutate({
+      ticketId: id,
+      body: {
+        deadline: value.toString(),
+      },
+    })
+  }
 
+  // Delete
   const handleDeleteTicket = (id: string) => {}
 
   if (error) {
