@@ -3,7 +3,7 @@ import { formatDate } from '@frontend/util/date'
 import { useState } from 'react'
 
 type Props = {
-  value: Date
+  value?: Date
   onSave: (value: Date) => void
 }
 
@@ -16,7 +16,12 @@ export const EditableDateTimeField = ({ value, onSave }: Props) => {
   }
 
   if (isEditing) {
-    return <DateTimePicker date={new Date(value)} setDate={handleSave} />
+    return (
+      <DateTimePicker
+        date={value ? new Date(value) : new Date()}
+        setDate={handleSave}
+      />
+    )
   }
   return (
     <span
@@ -24,7 +29,7 @@ export const EditableDateTimeField = ({ value, onSave }: Props) => {
       onKeyUp={() => setIsEditing(true)}
       suppressHydrationWarning={true}
     >
-      {formatDate(value)}
+      {value ? formatDate(value) : ''}
     </span>
   )
 }
