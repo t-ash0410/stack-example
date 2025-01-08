@@ -8,22 +8,15 @@ type Props = {
 }
 
 export const EditableDateTimeField = ({ value, onSave }: Props) => {
-  const { isEditing, setIsEditing, editedValue, setEditedValue } =
-    useEditableField(value)
+  const { isEditing, setIsEditing } = useEditableField(value)
 
-  const handleSave = () => {
-    onSave(editedValue)
+  const handleSave = (newDate: Date) => {
+    onSave(newDate)
     setIsEditing(false)
   }
 
   if (isEditing) {
-    return (
-      <DateTimePicker
-        date={new Date(value)}
-        setDate={(newDate) => setEditedValue(newDate)}
-        // onBlur={handleSave}
-      />
-    )
+    return <DateTimePicker date={new Date(value)} setDate={handleSave} />
   }
   return (
     <span
@@ -31,7 +24,7 @@ export const EditableDateTimeField = ({ value, onSave }: Props) => {
       onKeyUp={() => setIsEditing(true)}
       suppressHydrationWarning={true}
     >
-      {formatDate(editedValue)}
+      {formatDate(value)}
     </span>
   )
 }
