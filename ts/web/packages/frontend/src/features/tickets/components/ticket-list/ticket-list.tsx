@@ -121,7 +121,10 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
               onSave={(value) => handleEditDeadline(ticket, value)}
             />
           </p>
-          <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
+          <p
+            className="pt-1 text-xs text-gray-400"
+            suppressHydrationWarning={true}
+          >
             作成日時: {formatDate(ticket.createdAt)}
           </p>
           <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
