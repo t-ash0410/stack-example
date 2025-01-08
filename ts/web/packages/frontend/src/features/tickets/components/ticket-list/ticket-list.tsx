@@ -40,7 +40,9 @@ export const TicketList = () => {
             onCancel={() => setIsCreating(false)}
           />
         ) : (
-          <Button onClick={() => setIsCreating(true)}>新しいTODOを追加</Button>
+          <Button className="bg-primary" onClick={() => setIsCreating(true)}>
+            新しいTODOを追加
+          </Button>
         )}
       </div>
       {isLoading ? <div>Loading...</div> : <></>}
