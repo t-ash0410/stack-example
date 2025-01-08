@@ -6,7 +6,7 @@ import { sessionQueryKeys } from '../query-key-factory'
 export const useGetSession = () => {
   const bff = useBff()
   return useQuery({
-    queryKey: [...sessionQueryKeys.all],
+    queryKey: sessionQueryKeys.all,
     queryFn: async () => {
       const res = await bff.session.$get()
       if (!res.ok) {
