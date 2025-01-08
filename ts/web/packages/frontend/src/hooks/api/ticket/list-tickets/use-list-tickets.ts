@@ -1,9 +1,9 @@
-import { useBff } from '@frontend/hooks/use-bff'
+import { getHC } from '@frontend/lib'
 import { useQuery } from '@tanstack/react-query'
 import { ticketQueryKeys } from '../query-key-factory'
 
 export const useListTickets = () => {
-  const bff = useBff()
+  const bff = getHC()
   return useQuery({
     queryKey: ticketQueryKeys.all,
     queryFn: async () => {
