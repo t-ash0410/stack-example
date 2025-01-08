@@ -1,4 +1,4 @@
-import { RootRedirect } from '@frontend/features/root/components'
+import { RootRedirect } from '@frontend/features/root'
 
 export default () => {
   return <RootRedirect />

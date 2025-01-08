@@ -9,10 +9,23 @@ import type { ticketDetailParamValidator } from './middleware'
 const validator = zValidator(
   'json',
   z.object({
-    title: z.string(),
-    description: z.string(),
-    deadline: z.string().transform((s) => new Date(s)),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    deadline: z
+      .string()
+      .optional()
+      .transform((s) => (s ? new Date(s) : undefined)),
   }),
+  (r, c) => {
+    if (r.data.deadline && Number.isNaN(r.data.deadline.getTime())) {
+      return c.json(
+        {
+          message: 'invalid date',
+        },
+        400,
+      )
+    }
+  },
 )
 
 type UpdateTicketContext = Context<
@@ -40,7 +53,7 @@ const updateTicket = (ctx: UpdateTicketContext) => {
       requestedBy: activeUser.userId,
       title,
       description,
-      deadline: timestampFromDate(deadline),
+      deadline: deadline ? timestampFromDate(deadline) : undefined,
     }),
   )()
 }

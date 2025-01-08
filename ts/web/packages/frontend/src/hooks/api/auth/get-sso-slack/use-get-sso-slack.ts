@@ -1,4 +1,4 @@
-import { useBff } from '@frontend/hooks/use-bff'
+import { getHC } from '@frontend/lib'
 import { handleError } from '@frontend/util/handle-error'
 import { useQuery } from '@tanstack/react-query'
 import { authQueryKeys } from '../query-key-factory'
@@ -8,7 +8,7 @@ export const useGetSSOSlack = (
   query: GetSSOSlackQueryParams,
   enabled: boolean,
 ) => {
-  const bff = useBff()
+  const bff = getHC()
   return useQuery({
     queryKey: [...authQueryKeys.ssoSlack(query)],
     queryFn: async () => {

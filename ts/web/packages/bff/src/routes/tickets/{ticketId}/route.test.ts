@@ -206,7 +206,7 @@ describe('PUT /', async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // important
+        deadline: 'invalid', // important
       }),
     })
 

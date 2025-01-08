@@ -22,7 +22,9 @@ const listTickets = (ctx: Context<AuthNEnv>) => {
 }
 
 const convertResponse = (res: QueryTicketsResponse) => {
-  return ok(res.tickets.map(convertTicketToResponse))
+  return ok({
+    tickets: res.tickets.map(convertTicketToResponse),
+  })
 }
 
 export { handler as listHandler }

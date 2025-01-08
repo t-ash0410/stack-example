@@ -1,12 +1,12 @@
-import { useBff } from '@frontend/hooks/use-bff'
+import { getHC } from '@frontend/lib'
 import { handleError } from '@frontend/util/handle-error'
 import { useQuery } from '@tanstack/react-query'
 import { sessionQueryKeys } from '../query-key-factory'
 
 export const useGetSession = () => {
-  const bff = useBff()
+  const bff = getHC()
   return useQuery({
-    queryKey: [...sessionQueryKeys.all],
+    queryKey: sessionQueryKeys.all,
     queryFn: async () => {
       const res = await bff.session.$get()
       if (!res.ok) {
