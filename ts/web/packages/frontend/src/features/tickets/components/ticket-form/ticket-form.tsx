@@ -18,7 +18,7 @@ type TicketFormProps = {
   onCancel: () => void
 }
 
-export function TicketForm({ onSubmit, onCancel }: TicketFormProps) {
+export const TicketForm = ({ onSubmit, onCancel }: TicketFormProps) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [deadline, setDeadline] = useState(new Date())
