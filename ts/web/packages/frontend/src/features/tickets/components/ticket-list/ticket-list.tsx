@@ -1,4 +1,4 @@
-import { Button } from '@frontend/components'
+import { Button, TableSkeleton } from '@frontend/components'
 import { useListTickets } from '@frontend/hooks/api/ticket'
 import {} from '@frontend/types'
 import { formatDate } from '@frontend/util/date'
@@ -9,7 +9,7 @@ import { EditableDateTimeField, EditableTextField } from '../editable-field'
 import { TicketForm } from '../ticket-form'
 
 export const TicketList = () => {
-  const { data, isLoading, error, isError } = useListTickets()
+  const { data, isLoading, error } = useListTickets()
 
   const [isCreating, setIsCreating] = useState(false)
 
@@ -27,7 +27,7 @@ export const TicketList = () => {
 
   const handleDeleteTicket = (id: string) => {}
 
-  if (isError) {
+  if (error) {
     handleError(error)
     return
   }
@@ -45,7 +45,7 @@ export const TicketList = () => {
           </Button>
         )}
       </div>
-      {isLoading ? <div>Loading...</div> : <></>}
+      {isLoading ? <TableSkeleton /> : <></>}
       {data?.tickets.map((ticket) => (
         <div key={ticket.ticketId} className="bg-white p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
