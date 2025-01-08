@@ -1,6 +1,6 @@
 import { Input } from '@frontend/components/ui/input'
 import { Textarea } from '@frontend/components/ui/textarea'
-import { useEditableField } from './use-editable-field'
+import { useState } from 'react'
 
 type Props = {
   value: string
@@ -13,8 +13,8 @@ export const EditableTextField = ({
   onSave,
   inputType = 'input',
 }: Props) => {
-  const { isEditing, setIsEditing, editedValue, setEditedValue } =
-    useEditableField(value)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedValue, setEditedValue] = useState(value)
 
   const handleSave = () => {
     onSave(editedValue)

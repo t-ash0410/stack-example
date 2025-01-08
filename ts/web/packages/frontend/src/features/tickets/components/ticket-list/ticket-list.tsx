@@ -111,7 +111,7 @@ export const TicketList = () => {
               />
             </h3>
             <div className="flex space-x-2">
-              <DeleteButton onCancel={() => handleDeleteTicket(ticket.id)} />
+              <DeleteButton onDelete={() => handleDeleteTicket(ticket.id)} />
             </div>
           </div>
           <div className="mb-2">

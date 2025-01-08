@@ -1,6 +1,6 @@
 import { DateTimePicker } from '@frontend/components/ui/date-time-picker'
 import { formatDate } from '@frontend/util/date'
-import { useEditableField } from './use-editable-field'
+import { useState } from 'react'
 
 type Props = {
   value: Date
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const EditableDateTimeField = ({ value, onSave }: Props) => {
-  const { isEditing, setIsEditing } = useEditableField(value)
+  const [isEditing, setIsEditing] = useState(false)
 
   const handleSave = (newDate: Date) => {
     onSave(newDate)

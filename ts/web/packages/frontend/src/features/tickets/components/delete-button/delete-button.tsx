@@ -14,15 +14,17 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 type Props = {
-  onCancel: () => void
+  onDelete: () => void
 }
 
-export const DeleteButton = ({ onCancel }: Props) => {
+export const DeleteButton = ({ onDelete }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
+
   const onClick = () => {
     setOpen(false)
-    onCancel()
+    onDelete()
   }
+
   return (
     <AlertDialog open={open} onOpenChange={(o) => setOpen(o)}>
       <AlertDialogTrigger asChild>
