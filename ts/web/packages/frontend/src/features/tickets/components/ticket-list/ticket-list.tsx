@@ -1,16 +1,18 @@
 import { Button, TableSkeleton } from '@frontend/components'
-import { useListTickets } from '@frontend/hooks/api/ticket'
-import {} from '@frontend/types'
+import { useCreateTicket, useListTickets } from '@frontend/hooks/api/ticket'
 import { formatDate } from '@frontend/util/date'
 import { handleError } from '@frontend/util/handle-error'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DeleteButton } from '../delete-button'
 import { EditableDateTimeField, EditableTextField } from '../editable-field'
 import { TicketForm } from '../ticket-form'
 
 export const TicketList = () => {
+  const queryClient = useQueryClient()
   const { data, isLoading, error } = useListTickets()
 
+  const createMutation = useCreateTicket(queryClient)
   const [isCreating, setIsCreating] = useState(false)
 
   const handleCreateTicket = (newTicket: {
@@ -18,6 +20,10 @@ export const TicketList = () => {
     description: string
     deadline: Date
   }) => {
+    createMutation.mutate({
+      ...newTicket,
+      deadline: newTicket.deadline.toString(),
+    })
     setIsCreating(false)
   }
 
