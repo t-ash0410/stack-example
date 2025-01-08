@@ -10,10 +10,12 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 
-export function DateTimePicker({
-  date,
-  setDate,
-}: { date: Date; setDate: (date: Date) => void }) {
+type Props = {
+  date: Date
+  setDate: (date: Date) => void
+}
+
+export function DateTimePicker({ date, setDate }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>
