@@ -1,6 +1,7 @@
 import { Button, TableSkeleton } from '@frontend/components'
 import {
   useCreateTicket,
+  useDeleteTicket,
   useListTickets,
   useUpdateTicket,
 } from '@frontend/hooks/api/ticket'
@@ -59,7 +60,10 @@ export const TicketList = () => {
   }
 
   // Delete
-  const handleDeleteTicket = (id: string) => {}
+  const deleteMutation = useDeleteTicket(queryClient)
+  const handleDeleteTicket = (id: string) => {
+    deleteMutation.mutate(id)
+  }
 
   if (error) {
     handleError(error)
