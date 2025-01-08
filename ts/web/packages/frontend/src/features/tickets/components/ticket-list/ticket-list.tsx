@@ -1,18 +1,5 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@frontend/components/ui/alert-dialog'
-import { Button } from '@frontend/components/ui/button'
 import { formatDate } from '@frontend/util/date'
-import { Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { DeleteButton } from '../delete-button'
 import { EditableDateTimeField, EditableTextField } from '../editable-field'
 
 type Ticket = {
@@ -31,8 +18,6 @@ type TicketListProps = {
 }
 
 export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
-  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null)
-
   const handleEditField = (
     ticket: Ticket,
     field: keyof Ticket,
@@ -67,44 +52,7 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
               />
             </h3>
             <div className="flex space-x-2">
-              <AlertDialog
-                open={ticketToDelete === ticket.id}
-                onOpenChange={(isOpen) => !isOpen && setTicketToDelete(null)}
-              >
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="削除"
-                    onClick={() => setTicketToDelete(ticket.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      本当にこのTODOを削除しますか？
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      この操作は取り消せません。
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        if (ticketToDelete) {
-                          onDelete(ticketToDelete)
-                          setTicketToDelete(null)
-                        }
-                      }}
-                    >
-                      削除
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <DeleteButton onCancel={() => onDelete(ticket.id)} />
             </div>
           </div>
           <div className="mb-2">
@@ -125,10 +73,10 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
             className="pt-1 text-xs text-gray-400"
             suppressHydrationWarning={true}
           >
-            作成日時: {formatDate(ticket.createdAt)}
+            作成日時:&nbsp;{formatDate(ticket.createdAt)}
           </p>
           <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
-            更新日時: {formatDate(ticket.updatedAt)}
+            更新日時:&nbsp;{formatDate(ticket.updatedAt)}
           </p>
         </div>
       ))}
