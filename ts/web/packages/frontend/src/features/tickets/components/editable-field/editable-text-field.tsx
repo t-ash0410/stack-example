@@ -1,21 +1,20 @@
 import { Input } from '@frontend/components/ui/input'
 import { Textarea } from '@frontend/components/ui/textarea'
-import type React from 'react'
-import { useState } from 'react'
+import { useEditableField } from './use-editable-field'
 
-type EditableFieldProps = {
+type Props = {
   value: string
   onSave: (value: string) => void
   inputType?: 'input' | 'textarea'
 }
 
-export const EditableField: React.FC<EditableFieldProps> = ({
+export const EditableTextField = ({
   value,
   onSave,
   inputType = 'input',
-}) => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedValue, setEditedValue] = useState(value)
+}: Props) => {
+  const { isEditing, setIsEditing, editedValue, setEditedValue } =
+    useEditableField(value)
 
   const handleSave = () => {
     onSave(editedValue)
@@ -23,9 +22,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   }
 
   if (isEditing) {
-    const InputComponent = inputType === 'input' ? Input : Textarea
+    const C = inputType === 'input' ? Input : Textarea
     return (
-      <InputComponent
+      <C
         value={editedValue}
         onChange={(e) => setEditedValue(e.target.value)}
         onBlur={handleSave}
@@ -33,6 +32,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       />
     )
   }
-
-  return <span onClick={() => setIsEditing(true)}>{value}</span>
+  return (
+    <span onClick={() => setIsEditing(true)} onKeyUp={() => setIsEditing(true)}>
+      {value}
+    </span>
+  )
 }

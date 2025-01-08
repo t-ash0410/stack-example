@@ -10,11 +10,10 @@ import {
   AlertDialogTrigger,
 } from '@frontend/components/ui/alert-dialog'
 import { Button } from '@frontend/components/ui/button'
-import { DateTimePicker } from '@frontend/components/ui/date-time-picker'
 import { formatDate } from '@frontend/util/date'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { EditableField } from '../editable-field'
+import { EditableDateTimeField, EditableTextField } from '../editable-field'
 
 type Ticket = {
   id: string
@@ -33,14 +32,17 @@ type TicketListProps = {
 
 export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
   const [ticketToDelete, setTicketToDelete] = useState<string | null>(null)
-  const [editingDeadline, setEditingDeadline] = useState<string | null>(null)
 
   const handleEditField = (
     ticket: Ticket,
     field: keyof Ticket,
     value: string,
   ) => {
-    const updatedTicket = { ...ticket, [field]: value, updatedAt: new Date() }
+    const updatedTicket = {
+      ...ticket,
+      [field]: value,
+      updatedAt: new Date(),
+    }
     onEdit(updatedTicket)
   }
 
@@ -51,7 +53,6 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
       updatedAt: new Date(),
     }
     onEdit(updatedTicket)
-    setEditingDeadline(null)
   }
 
   return (
@@ -60,7 +61,7 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
         <div key={ticket.id} className="bg-white p-4 rounded-lg shadow">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold">
-              <EditableField
+              <EditableTextField
                 value={ticket.title}
                 onSave={(value) => handleEditField(ticket, 'title', value)}
               />
@@ -107,7 +108,7 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
             </div>
           </div>
           <div className="mb-2">
-            <EditableField
+            <EditableTextField
               value={ticket.description}
               onSave={(value) => handleEditField(ticket, 'description', value)}
               inputType="textarea"
@@ -115,19 +116,10 @@ export function TicketList({ tickets, onEdit, onDelete }: TicketListProps) {
           </div>
           <p className="text-sm text-gray-500">
             期限:
-            {editingDeadline === ticket.id ? (
-              <DateTimePicker
-                date={new Date(ticket.deadline)}
-                setDate={(newDate) => handleEditDeadline(ticket, newDate)}
-              />
-            ) : (
-              <span
-                onClick={() => setEditingDeadline(ticket.id)}
-                suppressHydrationWarning={true}
-              >
-                {formatDate(ticket.deadline)}
-              </span>
-            )}
+            <EditableDateTimeField
+              value={ticket.deadline}
+              onSave={(value) => handleEditDeadline(ticket, value)}
+            />
           </p>
           <p className="text-xs text-gray-400" suppressHydrationWarning={true}>
             作成日時: {formatDate(ticket.createdAt)}
