@@ -18,4 +18,15 @@ type BFFRequestQueryParams<
   ) => any,
 > = Parameters<T>['0']['query']
 
-export type { BFF, BFFRequestQueryParams, BFFResponse }
+type BFFRequestJsonParams<
+  T extends (
+    args: {
+      // biome-ignore lint/suspicious/noExplicitAny: Defined as a utility type, it should be widely available.
+      json: any
+    },
+    options?: ClientRequestOptions,
+    // biome-ignore lint/suspicious/noExplicitAny: Defined as a utility type, it should be widely available.
+  ) => any,
+> = Parameters<T>['0']['json']
+
+export type { BFF, BFFRequestQueryParams, BFFRequestJsonParams, BFFResponse }
