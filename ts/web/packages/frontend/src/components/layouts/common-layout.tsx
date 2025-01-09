@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import type { ReactNode } from 'react'
 
-export const Layout = (props: {
+const CommonLayout = (props: {
   title: string
   children: ReactNode
 }) => {
@@ -20,3 +20,5 @@ export const Layout = (props: {
     </>
   )
 }
+
+export { CommonLayout }
