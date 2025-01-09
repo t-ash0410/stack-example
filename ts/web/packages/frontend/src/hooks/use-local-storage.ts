@@ -1,10 +1,11 @@
-import * as React from 'react'
+import { localStorageKeys } from '@frontend/consts'
+import { useEffect, useState } from 'react'
 
-export function useGetLocalStorage(key: string) {
-  const [value, setValue] = React.useState<string>('')
+export function useGetLocalStorage(key: keyof typeof localStorageKeys) {
+  const [value, setValue] = useState<string>('')
 
-  React.useEffect(() => {
-    const v = localStorage.getItem(key)
+  useEffect(() => {
+    const v = localStorage.getItem(localStorageKeys[key])
     if (v) {
       setValue(v)
     }
@@ -13,8 +14,11 @@ export function useGetLocalStorage(key: string) {
   return value
 }
 
-export function useSetLocalStorage(key: string, value: string) {
-  React.useEffect(() => {
+export function useSetLocalStorage(
+  key: keyof typeof localStorageKeys,
+  value: string,
+) {
+  useEffect(() => {
     localStorage.setItem(key, value)
   }, [key, value])
 }
