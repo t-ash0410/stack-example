@@ -2,8 +2,8 @@ import { Button } from '@frontend/components/ui/button'
 import { LogOut } from 'lucide-react'
 
 const HamburgerMenu = () => {
-  const handleLogout = () => {
-    console.log('ログアウトが実行されました')
+  const handleSignout = () => {
+    // TODO: Impl sign out
   }
   return (
     <nav className="py-2">
@@ -12,7 +12,7 @@ const HamburgerMenu = () => {
           <Button
             variant="ghost"
             className="w-full justify-start"
-            onClick={handleLogout}
+            onClick={handleSignout}
           >
             <LogOut className="mr-2 h-4 w-4" />
             ログアウト
