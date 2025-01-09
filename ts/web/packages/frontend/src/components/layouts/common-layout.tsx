@@ -1,17 +1,19 @@
 import Head from 'next/head'
 import type { ReactNode } from 'react'
 
-const CommonLayout = (props: {
+type Props = {
   title: string
   children: ReactNode
-}) => {
-  const t = `${props.title} | Stack Example`
+}
+
+const CommonLayout = ({ title, children }: Props) => {
+  const t = `${title} | Stack Example`
   return (
     <>
       <Head>
         <title>{t}</title>
       </Head>
-      {props.children}
+      {children}
       <footer>
         <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
           <p className="text-sm text-left">© 2025 Stack Example</p>
