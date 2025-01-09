@@ -1,4 +1,4 @@
-import { localStorageKeys } from '@frontend/consts'
+import { localStorageKeys, pagePaths } from '@frontend/consts'
 import { useGetSSOSlack } from '@frontend/hooks/api'
 import { handleError } from '@frontend/util/handle-error'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -21,11 +21,11 @@ export function useSlackSSORedirect() {
     if (isLoading || !data) return
     if (isError) {
       handleError(new Error('サインインに失敗しました'))
-      router.push('/')
+      router.push(pagePaths.root.path)
       return
     }
 
     localStorage.setItem(localStorageKeys.SLACK_TEAM_ID, data.slackTeamId)
-    router.push('/')
+    router.push(pagePaths.root.path)
   }, [router, data, isLoading, isError])
 }

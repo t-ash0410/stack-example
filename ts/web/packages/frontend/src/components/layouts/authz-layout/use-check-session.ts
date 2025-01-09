@@ -1,3 +1,4 @@
+import { pagePaths } from '@frontend/consts'
 import { useGetSession } from '@frontend/hooks/api'
 import { handleError } from '@frontend/util/handle-error'
 import { useRouter } from 'next/router'
@@ -14,7 +15,7 @@ const useCheckSession = () => {
       return
     }
     if (data.status === 401) {
-      router.push('/signin')
+      router.push(pagePaths.signin.path)
       return
     }
   }, [router, data, isLoading, isError])

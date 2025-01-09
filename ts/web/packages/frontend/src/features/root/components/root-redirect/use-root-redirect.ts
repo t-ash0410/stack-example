@@ -1,3 +1,4 @@
+import { pagePaths } from '@frontend/consts'
 import { useGetSession } from '@frontend/hooks/api'
 import { handleError } from '@frontend/util/handle-error'
 import { useRouter } from 'next/navigation'
@@ -14,9 +15,9 @@ export function useRootRedirect() {
       return
     }
     if (data.status === 401) {
-      router.push('/signin')
+      router.push(pagePaths.signin.path)
       return
     }
-    router.push('/tickets')
+    router.push(pagePaths.tickets.path)
   }, [router, data, isLoading, isError])
 }

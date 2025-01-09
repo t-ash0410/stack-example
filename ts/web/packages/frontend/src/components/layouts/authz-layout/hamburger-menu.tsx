@@ -1,10 +1,9 @@
 import { Button } from '@frontend/components/ui/button'
 import { LogOut } from 'lucide-react'
+import { useSignout } from './use-signout'
 
 const HamburgerMenu = () => {
-  const handleSignout = () => {
-    // TODO: Impl sign out
-  }
+  const { handleSignout } = useSignout()
   return (
     <nav className="py-2">
       <ul>

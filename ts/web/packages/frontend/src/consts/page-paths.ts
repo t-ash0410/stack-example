@@ -1,4 +1,7 @@
 export const pagePaths = {
+  root: {
+    path: '/',
+  },
   signin: {
     path: '/signin',
     title: 'サインイン',
