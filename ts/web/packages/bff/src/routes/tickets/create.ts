@@ -1,7 +1,7 @@
-import type { AuthNEnv, ValidatorSchema } from '@bff/types'
+import type { AuthNEnv } from '@bff/types'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 import { zValidator } from '@hono/zod-validator'
-import type { Context } from 'hono'
+import { createFactory } from 'hono/factory'
 import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
@@ -14,33 +14,26 @@ const validator = zValidator(
   }),
 )
 
-type CreateTicketContext = Context<
-  AuthNEnv,
-  '',
-  ValidatorSchema<typeof validator>
->
+const handlers = createFactory<AuthNEnv>().createHandlers(
+  validator,
+  async (c) => {
+    const { activeUser, ticketMgrServiceClient } = c.var
+    const { title, description, deadline } = c.req.valid('json')
+    const res = await ResultAsync.fromThrowable(() =>
+      ticketMgrServiceClient.createTicket({
+        requestedBy: activeUser.userId,
+        title,
+        description,
+        deadline: timestampFromDate(deadline),
+      }),
+    )()
+    if (res.isErr()) {
+      throw res.error
+    }
+    return c.json({
+      ticketId: res.value.ticketId,
+    })
+  },
+)
 
-const handler = async (c: CreateTicketContext) => {
-  const res = await createTicket(c)
-  if (res.isErr()) {
-    throw res.error
-  }
-  return c.json({
-    ticketId: res.value.ticketId,
-  })
-}
-
-const createTicket = (ctx: CreateTicketContext) => {
-  const { activeUser, ticketMgrServiceClient } = ctx.var
-  const { title, description, deadline } = ctx.req.valid('json')
-  return ResultAsync.fromThrowable(() =>
-    ticketMgrServiceClient.createTicket({
-      requestedBy: activeUser.userId,
-      title,
-      description,
-      deadline: timestampFromDate(deadline),
-    }),
-  )()
-}
-
-export { handler as createHandler, validator as createValidator }
+export { handlers as createHandlers }
