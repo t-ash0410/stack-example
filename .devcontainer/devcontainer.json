@@ -73,7 +73,9 @@
         "streetsidesoftware.code-spell-checker",
         "oderwat.indent-rainbow",
         "Equinusocio.vsc-material-theme",
-        "PKief.material-icon-theme"
+        "PKief.material-icon-theme",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
       ]
     }
   },
