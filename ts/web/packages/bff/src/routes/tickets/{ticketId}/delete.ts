@@ -1,30 +1,22 @@
-import type { AuthNEnv, ValidatorSchema } from '@bff/types'
-import type { Context } from 'hono'
+import type {} from '@bff/types'
 import { ResultAsync } from 'neverthrow'
-import type { ticketDetailParamValidator } from './middleware'
+import { ticketDetailFactory, ticketDetailParamValidator } from './app'
 
-type DeleteTicketContext = Context<
-  AuthNEnv,
-  '',
-  ValidatorSchema<typeof ticketDetailParamValidator>
->
+const handlers = ticketDetailFactory.createHandlers(
+  ticketDetailParamValidator,
+  async (c) => {
+    const { ticketMgrServiceClient } = c.var
+    const { ticketId } = c.req.valid('param')
+    const res = await ResultAsync.fromThrowable(() =>
+      ticketMgrServiceClient.deleteTicket({
+        ticketId,
+      }),
+    )()
+    if (res.isErr()) {
+      throw res.error
+    }
+    return c.json({})
+  },
+)
 
-const handler = async (c: DeleteTicketContext) => {
-  const res = await deleteTicket(c)
-  if (res.isErr()) {
-    throw res.error
-  }
-  return c.json({})
-}
-
-const deleteTicket = (ctx: DeleteTicketContext) => {
-  const { ticketMgrServiceClient } = ctx.var
-  const { ticketId } = ctx.req.valid('param')
-  return ResultAsync.fromThrowable(() =>
-    ticketMgrServiceClient.deleteTicket({
-      ticketId,
-    }),
-  )()
-}
-
-export { handler as deleteHandler }
+export { handlers as deleteHandlers }

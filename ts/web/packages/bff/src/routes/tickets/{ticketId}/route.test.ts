@@ -281,7 +281,6 @@ describe('DELETE /', async () => {
   })
 
   it('returns 500 error if ticket deletion fails', async () => {
-    const called = false
     spyOn(mockTicketMgrServiceClient, 'deleteTicket').mockRejectedValue(
       new Error('Some error'),
     )
