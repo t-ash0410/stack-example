@@ -11,7 +11,7 @@
     "@connectrpc/connect-node": "^2.0.0",
     "@hono/zod-validator": "^0.4.2",
     "@stack-example/grpc": "workspace:*",
-    "hono": "^4.6.15",
+    "hono": "^4.7.0",
     "jose": "^5.9.6",
     "neverthrow": "^8.1.1",
     "pino": "^9.6.0",
