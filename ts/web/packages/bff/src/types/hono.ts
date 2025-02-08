@@ -1,4 +1,4 @@
-import type { Env, MiddlewareHandler } from 'hono'
+import type {} from 'hono'
 import type { Logger } from 'pino'
 import type {
   AccountMgrServiceClient,
@@ -24,11 +24,3 @@ export type AuthNEnv = DefaultEnv & {
     activeUser: ActiveUser
   }
 }
-
-export type ValidatorSchema<T> = T extends MiddlewareHandler<
-  Env,
-  string,
-  infer R
->
-  ? R
-  : never
