@@ -5,10 +5,11 @@ import {
   SLACK_SSO_REDIRECT_URL,
 } from '@bff/env'
 import { createJWT, setJWTCookie } from '@bff/jwt'
-import type { DefaultEnv, ValidatorInput } from '@bff/types'
+import type { DefaultEnv, ValidatorSchema } from '@bff/types'
 import { zValidator } from '@hono/zod-validator'
 import type { Context } from 'hono'
 import { deleteCookie, getCookie } from 'hono/cookie'
+import { createFactory } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
 import { type JWTPayload, createRemoteJWKSet, jwtVerify } from 'jose'
 import { Result, ResultAsync, err, ok } from 'neverthrow'
@@ -18,6 +19,8 @@ const SLACK_SSO_URL = 'https://slack.com/api/openid.connect.token'
 const SLACK_JWK_URL = 'https://slack.com/openid/connect/keys'
 const SLACK_JWT_ISSUER = 'https://slack.com'
 
+const factory = createFactory<DefaultEnv>()
+
 const validator = zValidator(
   'query',
   z.object({
@@ -26,9 +29,7 @@ const validator = zValidator(
   }),
 )
 
-const handler = async (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
-) => {
+const handlers = factory.createHandlers(validator, async (c) => {
   deleteSession(c)
 
   const res = await checkState(c)
@@ -55,7 +56,7 @@ const handler = async (
     jwt,
     slackTeamId: res.value.slackTeamId,
   })
-}
+})
 
 const deleteSession = (c: Context) => {
   const opts: CookieOptions = {
@@ -70,7 +71,7 @@ const deleteSession = (c: Context) => {
 }
 
 const checkState = (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
+  c: Context<DefaultEnv, '', ValidatorSchema<typeof validator>>,
 ) => {
   const cookieState = getCookie(c, 'state')
   if (!cookieState) {
@@ -88,7 +89,7 @@ const checkState = (
 }
 
 const getSlackJWT = (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
+  c: Context<DefaultEnv, '', ValidatorSchema<typeof validator>>,
 ) =>
   ResultAsync.fromThrowable(
     () => {
@@ -170,4 +171,4 @@ const callAccountMgr = (c: Context<DefaultEnv>, payload: JWTPayload) => {
   })
 }
 
-export { handler as slackHandler, validator as slackValidator }
+export { handlers as slackHandlers }
