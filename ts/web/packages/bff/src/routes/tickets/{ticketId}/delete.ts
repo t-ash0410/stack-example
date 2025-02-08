@@ -1,4 +1,3 @@
-import type {} from '@bff/types'
 import { ResultAsync } from 'neverthrow'
 import { ticketDetailFactory, ticketDetailParamValidator } from './app'
 
