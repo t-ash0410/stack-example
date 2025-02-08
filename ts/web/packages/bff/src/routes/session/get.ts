@@ -1,11 +1,11 @@
 import type { AuthNEnv } from '@bff/types'
-import type { Context } from 'hono'
+import { createFactory } from 'hono/factory'
 
-const handler = async (c: Context<AuthNEnv>) => {
+const handlers = createFactory<AuthNEnv>().createHandlers(async (c) => {
   const { userId } = c.var.activeUser
   return c.json({
     userId,
   })
-}
+})
 
-export { handler as getHandler }
+export { handlers as getHandlers }

@@ -1,7 +1,9 @@
 import type { DefaultEnv } from '@bff/types'
-import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
 import { oidcRoute } from './oidc'
 
-const authRoute = new Hono<DefaultEnv>().route('/oidc', oidcRoute)
+const authRoute = createFactory<DefaultEnv>()
+  .createApp()
+  .route('/oidc', oidcRoute)
 
 export { authRoute }
