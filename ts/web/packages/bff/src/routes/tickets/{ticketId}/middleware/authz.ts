@@ -1,4 +1,4 @@
-import type { AuthNEnv, ValidatorInput } from '@bff/types'
+import type { AuthNEnv, ValidatorSchema } from '@bff/types'
 import type { Ticket } from '@stack-example/grpc'
 import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
@@ -9,7 +9,7 @@ import type { ticketDetailParamValidator } from './param-validator'
 type TicketDetailContext = Context<
   AuthNEnv,
   '',
-  ValidatorInput<typeof ticketDetailParamValidator>
+  ValidatorSchema<typeof ticketDetailParamValidator>
 >
 
 const ticketDetailAuthZ = createMiddleware(async (c, next) => {

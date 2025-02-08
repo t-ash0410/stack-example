@@ -1,5 +1,5 @@
 import { convertTicketToResponse } from '@bff/grpc/ticket'
-import type { AuthNEnv, ValidatorInput } from '@bff/types'
+import type { AuthNEnv, ValidatorSchema } from '@bff/types'
 import type { GetTicketByIdResponse } from '@stack-example/grpc'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
@@ -9,7 +9,7 @@ import type { ticketDetailParamValidator } from './middleware'
 type GetTicketContext = Context<
   AuthNEnv,
   '',
-  ValidatorInput<typeof ticketDetailParamValidator>
+  ValidatorSchema<typeof ticketDetailParamValidator>
 >
 
 const handler = async (c: GetTicketContext) => {

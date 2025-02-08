@@ -1,4 +1,4 @@
-import type { AuthNEnv, ValidatorInput } from '@bff/types'
+import type { AuthNEnv, ValidatorSchema } from '@bff/types'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 import { zValidator } from '@hono/zod-validator'
 import type { Context } from 'hono'
@@ -31,8 +31,8 @@ const validator = zValidator(
 type UpdateTicketContext = Context<
   AuthNEnv,
   '',
-  ValidatorInput<typeof ticketDetailParamValidator> &
-    ValidatorInput<typeof validator>
+  ValidatorSchema<typeof ticketDetailParamValidator> &
+    ValidatorSchema<typeof validator>
 >
 
 const handler = async (c: UpdateTicketContext) => {

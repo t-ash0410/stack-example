@@ -25,7 +25,7 @@ export type AuthNEnv = DefaultEnv & {
   }
 }
 
-export type ValidatorInput<T> = T extends MiddlewareHandler<
+export type ValidatorSchema<T> = T extends MiddlewareHandler<
   Env,
   string,
   infer R

@@ -1,4 +1,4 @@
-import type { AuthNEnv, ValidatorInput } from '@bff/types'
+import type { AuthNEnv, ValidatorSchema } from '@bff/types'
 import type { Context } from 'hono'
 import { ResultAsync } from 'neverthrow'
 import type { ticketDetailParamValidator } from './middleware'
@@ -6,7 +6,7 @@ import type { ticketDetailParamValidator } from './middleware'
 type DeleteTicketContext = Context<
   AuthNEnv,
   '',
-  ValidatorInput<typeof ticketDetailParamValidator>
+  ValidatorSchema<typeof ticketDetailParamValidator>
 >
 
 const handler = async (c: DeleteTicketContext) => {
