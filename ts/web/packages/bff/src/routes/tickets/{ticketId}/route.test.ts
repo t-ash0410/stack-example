@@ -43,8 +43,13 @@ describe('GET /', async () => {
     mock.restore()
   })
 
-  it('returns tickets', async () => {
-    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+  it('returns a ticket', async () => {
+    const app = initHonoApp()
+      .route(':ticketId', ticketDetailRoute)
+      .onError((e) => {
+        console.log(e)
+        throw e
+      })
 
     const res = await app.request('/some-ticket', {
       method: 'GET',

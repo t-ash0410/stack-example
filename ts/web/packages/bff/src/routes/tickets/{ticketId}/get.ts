@@ -1,3 +1,4 @@
+import { convertTicketToResponse } from '@bff/grpc/ticket'
 import { HTTPException } from 'hono/http-exception'
 import { ResultAsync, err, ok } from 'neverthrow'
 import { ticketDetailFactory, ticketDetailParamValidator } from './app'
@@ -12,7 +13,11 @@ const handlers = ticketDetailFactory.createHandlers(
       ticketQuerierServiceClient.getTicketById({
         ticketId: ticketId,
       }),
-    )().andThen((res) => (res.ticket ? ok(res) : err(new HTTPException(404))))
+    )().andThen((res) =>
+      res.ticket
+        ? ok(convertTicketToResponse(res.ticket))
+        : err(new HTTPException(404)),
+    )
     if (res.isErr()) {
       throw res.error
     }
