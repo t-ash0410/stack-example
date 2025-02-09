@@ -1,10 +1,9 @@
-import type { DefaultEnv } from '@bff/types'
-import { Hono } from 'hono'
-import { sessionHandler } from './session'
-import { slackHandler, slackValidator } from './slack'
+import { oidcApp } from './app'
+import { sessionHandlers } from './session'
+import { slackHandlers } from './slack'
 
-const oidcRoute = new Hono<DefaultEnv>()
-  .get('/session', sessionHandler)
-  .get('/slack', slackValidator, slackHandler)
+const oidcRoute = oidcApp
+  .get('/session', ...sessionHandlers)
+  .get('/slack', ...slackHandlers)
 
 export { oidcRoute }

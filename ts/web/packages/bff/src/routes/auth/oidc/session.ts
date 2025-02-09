@@ -3,8 +3,9 @@ import type { DefaultEnv } from '@bff/types'
 import type { Context } from 'hono'
 import { setCookie } from 'hono/cookie'
 import type { CookieOptions } from 'hono/utils/cookie'
+import { oidcFactory } from './app'
 
-const handler = async (c: Context<DefaultEnv>) => {
+const handlers = oidcFactory.createHandlers(async (c: Context<DefaultEnv>) => {
   const expires = new Date()
   expires.setMinutes(expires.getMinutes() + 10)
 
@@ -27,6 +28,6 @@ const handler = async (c: Context<DefaultEnv>) => {
     state,
     nonce,
   })
-}
+})
 
-export { handler as sessionHandler }
+export { handlers as sessionHandlers }

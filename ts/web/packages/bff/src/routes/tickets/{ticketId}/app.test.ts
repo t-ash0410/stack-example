@@ -11,10 +11,9 @@ import { initHonoApp, mockTicketQuerierServiceClient } from '@bff/testutil'
 import { create } from '@bufbuild/protobuf'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 import { GetTicketByIdResponseSchema } from '@stack-example/grpc'
-import { ticketDetailAuthZ } from './authz'
-import { ticketDetailParamValidator } from './param-validator'
+import { ticketDetailParamValidator } from './app'
 
-describe('ticketDetailAuthZ', () => {
+describe('ticketDetailParamValidator', () => {
   beforeEach(() => {
     spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockResolvedValue(
       create(GetTicketByIdResponseSchema, {
@@ -39,7 +38,6 @@ describe('ticketDetailAuthZ', () => {
     const app = initHonoApp().get(
       '/:ticketId',
       ticketDetailParamValidator,
-      ticketDetailAuthZ,
       async (c) => {
         return c.json({})
       },
@@ -61,6 +59,22 @@ describe('ticketDetailAuthZ', () => {
     })
   })
 
+  it('returns 400 error if the path does not contain an ticketId', async () => {
+    const app = initHonoApp().get(
+      '/:invalid', // important
+      ticketDetailParamValidator,
+      async (c) => {
+        return c.json({})
+      },
+    )
+
+    const res = await app.request('/some-ticket', {
+      method: 'GET',
+    })
+
+    expect(res.status).toBe(400)
+  })
+
   it('returns 403 error if the request is not made by the ticket creator him/herself', async () => {
     spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockResolvedValue(
       create(GetTicketByIdResponseSchema, {
@@ -74,7 +88,6 @@ describe('ticketDetailAuthZ', () => {
     const app = initHonoApp().get(
       '/:ticketId',
       ticketDetailParamValidator,
-      ticketDetailAuthZ,
       async (c) => {
         return c.json({})
       },
@@ -99,7 +112,6 @@ describe('ticketDetailAuthZ', () => {
     const app = initHonoApp().get(
       '/:ticketId',
       ticketDetailParamValidator,
-      ticketDetailAuthZ,
       async (c) => {
         return c.json({})
       },

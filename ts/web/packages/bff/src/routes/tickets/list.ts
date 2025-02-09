@@ -1,30 +1,22 @@
 import { convertTicketToResponse } from '@bff/grpc/ticket'
-import type { AuthNEnv } from '@bff/types'
-import type { QueryTicketsResponse } from '@stack-example/grpc'
-import type { Context } from 'hono'
 import { ResultAsync, ok } from 'neverthrow'
+import { ticketsFactory } from './app'
 
-const handler = async (c: Context<AuthNEnv>) => {
-  const res = await listTickets(c).andThen(convertResponse)
+const handlers = ticketsFactory.createHandlers(async (c) => {
+  const { activeUser, ticketQuerierServiceClient } = c.var
+  const res = await ResultAsync.fromThrowable(() =>
+    ticketQuerierServiceClient.queryTickets({
+      requestedBy: activeUser.userId,
+    }),
+  )().andThen((res) =>
+    ok({
+      tickets: res.tickets.map(convertTicketToResponse),
+    }),
+  )
   if (res.isErr()) {
     throw res.error
   }
   return c.json(res.value)
-}
+})
 
-const listTickets = (ctx: Context<AuthNEnv>) => {
-  const { activeUser, ticketQuerierServiceClient } = ctx.var
-  return ResultAsync.fromThrowable(() =>
-    ticketQuerierServiceClient.queryTickets({
-      requestedBy: activeUser.userId,
-    }),
-  )()
-}
-
-const convertResponse = (res: QueryTicketsResponse) => {
-  return ok({
-    tickets: res.tickets.map(convertTicketToResponse),
-  })
-}
-
-export { handler as listHandler }
+export { handlers as listHandlers }

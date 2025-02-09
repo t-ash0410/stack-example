@@ -43,8 +43,13 @@ describe('GET /', async () => {
     mock.restore()
   })
 
-  it('returns tickets', async () => {
-    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
+  it('returns a ticket', async () => {
+    const app = initHonoApp()
+      .route(':ticketId', ticketDetailRoute)
+      .onError((e) => {
+        console.log(e)
+        throw e
+      })
 
     const res = await app.request('/some-ticket', {
       method: 'GET',
@@ -63,85 +68,13 @@ describe('GET /', async () => {
 `)
 
     expect(mockTicketQuerierServiceClient.getTicketById).toHaveBeenCalledTimes(
-      2,
+      1,
     )
     expect(
       mockTicketQuerierServiceClient.getTicketById,
-    ).toHaveBeenNthCalledWith(2, {
+    ).toHaveBeenNthCalledWith(1, {
       ticketId: 'some-ticket',
     })
-  })
-
-  it('returns 404 error if the ticket does not found', async () => {
-    let called = false
-    spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockImplementation(
-      async () => {
-        if (called) {
-          return create(GetTicketByIdResponseSchema, {}) // important
-        }
-        called = true
-
-        return create(GetTicketByIdResponseSchema, {
-          ticket: {
-            ticketId: 'ticket-001',
-            createdAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
-            updatedAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
-            createdBy: 'user-001',
-            title: 'Some Ticket',
-            description: 'Some ticket description.',
-            deadline: timestampFromDate(new Date('2020-01-10T00:00:00.000Z')),
-          },
-        })
-      },
-    )
-
-    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
-
-    const res = await app.request('/some-ticket', {
-      method: 'GET',
-    })
-
-    expect(res.status).toBe(404)
-
-    expect(mockTicketQuerierServiceClient.getTicketById).toHaveBeenCalledTimes(
-      2,
-    )
-  })
-
-  it('returns 500 error if the ticket list fails to be retrieved', async () => {
-    let called = false
-    spyOn(mockTicketQuerierServiceClient, 'getTicketById').mockImplementation(
-      async () => {
-        if (called) {
-          throw new Error('Some error') // important
-        }
-        called = true
-
-        return create(GetTicketByIdResponseSchema, {
-          ticket: {
-            ticketId: 'ticket-001',
-            createdAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
-            updatedAt: timestampFromDate(new Date('2020-01-01T00:00:00.000Z')),
-            createdBy: 'user-001',
-            title: 'Some Ticket',
-            description: 'Some ticket description.',
-            deadline: timestampFromDate(new Date('2020-01-10T00:00:00.000Z')),
-          },
-        })
-      },
-    )
-
-    const app = initHonoApp().route(':ticketId', ticketDetailRoute)
-
-    const res = await app.request('/some-ticket', {
-      method: 'GET',
-    })
-
-    expect(res.status).toBe(500)
-
-    expect(mockTicketQuerierServiceClient.getTicketById).toHaveBeenCalledTimes(
-      2,
-    )
   })
 })
 
@@ -281,7 +214,6 @@ describe('DELETE /', async () => {
   })
 
   it('returns 500 error if ticket deletion fails', async () => {
-    const called = false
     spyOn(mockTicketMgrServiceClient, 'deleteTicket').mockRejectedValue(
       new Error('Some error'),
     )

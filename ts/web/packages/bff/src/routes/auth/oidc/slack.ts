@@ -5,7 +5,7 @@ import {
   SLACK_SSO_REDIRECT_URL,
 } from '@bff/env'
 import { createJWT, setJWTCookie } from '@bff/jwt'
-import type { DefaultEnv, ValidatorInput } from '@bff/types'
+import type { AccountMgrServiceClient } from '@bff/types'
 import { zValidator } from '@hono/zod-validator'
 import type { Context } from 'hono'
 import { deleteCookie, getCookie } from 'hono/cookie'
@@ -13,29 +13,32 @@ import type { CookieOptions } from 'hono/utils/cookie'
 import { type JWTPayload, createRemoteJWKSet, jwtVerify } from 'jose'
 import { Result, ResultAsync, err, ok } from 'neverthrow'
 import { z } from 'zod'
+import { oidcFactory } from './app'
 
 const SLACK_SSO_URL = 'https://slack.com/api/openid.connect.token'
 const SLACK_JWK_URL = 'https://slack.com/openid/connect/keys'
 const SLACK_JWT_ISSUER = 'https://slack.com'
 
-const validator = zValidator(
-  'query',
-  z.object({
-    code: z.string(),
-    state: z.string(),
-  }),
+const validator = oidcFactory.createMiddleware(
+  zValidator(
+    'query',
+    z.object({
+      code: z.string(),
+      state: z.string(),
+    }),
+  ),
 )
 
-const handler = async (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
-) => {
+const handlers = oidcFactory.createHandlers(validator, async (c) => {
   deleteSession(c)
 
-  const res = await checkState(c)
-    .asyncAndThen(getSlackJWT)
+  const accountMgr = c.var.accountMgrServiceClient
+  const { state, code } = c.req.valid('query')
+  const res = await checkState(c, state)
+    .asyncAndThen(() => getSlackJWT(code))
     .andThen(convertTokenResponse)
     .andThen((res) => verifyAndDecode(c, res.idToken))
-    .andThen((res) => callAccountMgr(c, res.payload))
+    .andThen((res) => callAccountMgr(accountMgr, res.payload))
   if (res.isErr()) {
     throw res.error
   }
@@ -55,7 +58,7 @@ const handler = async (
     jwt,
     slackTeamId: res.value.slackTeamId,
   })
-}
+})
 
 const deleteSession = (c: Context) => {
   const opts: CookieOptions = {
@@ -69,15 +72,12 @@ const deleteSession = (c: Context) => {
   deleteCookie(c, 'nonce', opts)
 }
 
-const checkState = (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
-) => {
+const checkState = (c: Context, state: string) => {
   const cookieState = getCookie(c, 'state')
   if (!cookieState) {
     return err(new Error('No state set in cookie'))
   }
 
-  const { state } = c.req.valid('query')
   if (cookieState !== state) {
     return err(
       new Error(`State do not match: cookie=${cookieState}, request=${state}`),
@@ -87,13 +87,9 @@ const checkState = (
   return ok(c)
 }
 
-const getSlackJWT = (
-  c: Context<DefaultEnv, '', ValidatorInput<typeof validator>>,
-) =>
+const getSlackJWT = (code: string) =>
   ResultAsync.fromThrowable(
     () => {
-      const { code } = c.req.valid('query')
-
       return global.fetch(SLACK_SSO_URL, {
         method: 'POST',
         headers: {
@@ -153,10 +149,13 @@ const verifyAndDecode = (c: Context, idToken: string) =>
     return ok(jwt)
   })
 
-const callAccountMgr = (c: Context<DefaultEnv>, payload: JWTPayload) => {
+const callAccountMgr = (
+  accountMgr: AccountMgrServiceClient,
+  payload: JWTPayload,
+) => {
   const teamId = payload['https://slack.com/team_id'] as string
   return ResultAsync.fromThrowable(() => {
-    return c.var.accountMgrServiceClient.slackSSO({
+    return accountMgr.slackSSO({
       email: payload.email as string,
       name: payload.name as string,
       slackUserId: payload.sub as string,
@@ -170,4 +169,4 @@ const callAccountMgr = (c: Context<DefaultEnv>, payload: JWTPayload) => {
   })
 }
 
-export { handler as slackHandler, validator as slackValidator }
+export { handlers as slackHandlers }

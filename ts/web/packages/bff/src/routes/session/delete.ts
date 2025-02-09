@@ -1,10 +1,9 @@
 import { DOMAIN, JWT_KEY } from '@bff/env'
-import type { AuthNEnv } from '@bff/types'
-import type { Context } from 'hono'
 import { deleteCookie } from 'hono/cookie'
 import type { CookieOptions } from 'hono/utils/cookie'
+import { sessionFactory } from './app'
 
-const handler = async (c: Context<AuthNEnv>) => {
+const handlers = sessionFactory.createHandlers(async (c) => {
   const opts: CookieOptions = {
     path: '/',
     secure: true,
@@ -15,6 +14,6 @@ const handler = async (c: Context<AuthNEnv>) => {
   deleteCookie(c, JWT_KEY, opts)
 
   return c.json({})
-}
+})
 
-export { handler as deleteHandler }
+export { handlers as deleteHandlers }

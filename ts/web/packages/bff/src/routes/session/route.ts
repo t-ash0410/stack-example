@@ -1,10 +1,9 @@
-import type { AuthNEnv } from '@bff/types'
-import { Hono } from 'hono'
-import { deleteHandler } from './delete'
-import { getHandler } from './get'
+import { sessionApp } from './app'
+import { deleteHandlers } from './delete'
+import { getHandlers } from './get'
 
-const sessionRoute = new Hono<AuthNEnv>()
-  .get('/', getHandler)
-  .delete('/', deleteHandler)
+const sessionRoute = sessionApp
+  .get('/', ...getHandlers)
+  .delete('/', ...deleteHandlers)
 
 export { sessionRoute }
