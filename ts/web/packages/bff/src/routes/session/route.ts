@@ -1,10 +1,8 @@
-import type { AuthNEnv } from '@bff/types'
-import { createFactory } from 'hono/factory'
+import { sessionApp } from './app'
 import { deleteHandlers } from './delete'
 import { getHandlers } from './get'
 
-const sessionRoute = createFactory<AuthNEnv>()
-  .createApp()
+const sessionRoute = sessionApp
   .get('/', ...getHandlers)
   .delete('/', ...deleteHandlers)
 

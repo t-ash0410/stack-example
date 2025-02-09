@@ -1,7 +1,6 @@
-import type { AuthNEnv } from '@bff/types'
-import { createFactory } from 'hono/factory'
+import { sessionFactory } from './app'
 
-const handlers = createFactory<AuthNEnv>().createHandlers(async (c) => {
+const handlers = sessionFactory.createHandlers(async (c) => {
   const { userId } = c.var.activeUser
   return c.json({
     userId,

@@ -5,61 +5,60 @@ import {
   SLACK_SSO_REDIRECT_URL,
 } from '@bff/env'
 import { createJWT, setJWTCookie } from '@bff/jwt'
-import type { AccountMgrServiceClient, DefaultEnv } from '@bff/types'
+import type { AccountMgrServiceClient } from '@bff/types'
 import { zValidator } from '@hono/zod-validator'
 import type { Context } from 'hono'
 import { deleteCookie, getCookie } from 'hono/cookie'
-import { createFactory } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
 import { type JWTPayload, createRemoteJWKSet, jwtVerify } from 'jose'
 import { Result, ResultAsync, err, ok } from 'neverthrow'
 import { z } from 'zod'
+import { oidcFactory } from './app'
 
 const SLACK_SSO_URL = 'https://slack.com/api/openid.connect.token'
 const SLACK_JWK_URL = 'https://slack.com/openid/connect/keys'
 const SLACK_JWT_ISSUER = 'https://slack.com'
 
-const validator = zValidator(
-  'query',
-  z.object({
-    code: z.string(),
-    state: z.string(),
-  }),
+const validator = oidcFactory.createMiddleware(
+  zValidator(
+    'query',
+    z.object({
+      code: z.string(),
+      state: z.string(),
+    }),
+  ),
 )
 
-const handlers = createFactory<DefaultEnv>().createHandlers(
-  validator,
-  async (c) => {
-    deleteSession(c)
+const handlers = oidcFactory.createHandlers(validator, async (c) => {
+  deleteSession(c)
 
-    const accountMgr = c.var.accountMgrServiceClient
-    const { state, code } = c.req.valid('query')
-    const res = await checkState(c, state)
-      .asyncAndThen(() => getSlackJWT(code))
-      .andThen(convertTokenResponse)
-      .andThen((res) => verifyAndDecode(c, res.idToken))
-      .andThen((res) => callAccountMgr(accountMgr, res.payload))
-    if (res.isErr()) {
-      throw res.error
-    }
+  const accountMgr = c.var.accountMgrServiceClient
+  const { state, code } = c.req.valid('query')
+  const res = await checkState(c, state)
+    .asyncAndThen(() => getSlackJWT(code))
+    .andThen(convertTokenResponse)
+    .andThen((res) => verifyAndDecode(c, res.idToken))
+    .andThen((res) => callAccountMgr(accountMgr, res.payload))
+  if (res.isErr()) {
+    throw res.error
+  }
 
-    const now = new Date()
-    const jwt = await createJWT({
-      userId: res.value.userId,
-      now,
-    })
-    setJWTCookie({
-      ctx: c,
-      jwt,
-      now,
-    })
+  const now = new Date()
+  const jwt = await createJWT({
+    userId: res.value.userId,
+    now,
+  })
+  setJWTCookie({
+    ctx: c,
+    jwt,
+    now,
+  })
 
-    return c.json({
-      jwt,
-      slackTeamId: res.value.slackTeamId,
-    })
-  },
-)
+  return c.json({
+    jwt,
+    slackTeamId: res.value.slackTeamId,
+  })
+})
 
 const deleteSession = (c: Context) => {
   const opts: CookieOptions = {

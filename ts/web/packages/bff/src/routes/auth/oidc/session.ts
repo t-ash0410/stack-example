@@ -2,12 +2,10 @@ import { DOMAIN } from '@bff/env'
 import type { DefaultEnv } from '@bff/types'
 import type { Context } from 'hono'
 import { setCookie } from 'hono/cookie'
-import { createFactory } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
+import { oidcFactory } from './app'
 
-const factory = createFactory<DefaultEnv>()
-
-const handlers = factory.createHandlers(async (c: Context<DefaultEnv>) => {
+const handlers = oidcFactory.createHandlers(async (c: Context<DefaultEnv>) => {
   const expires = new Date()
   expires.setMinutes(expires.getMinutes() + 10)
 
