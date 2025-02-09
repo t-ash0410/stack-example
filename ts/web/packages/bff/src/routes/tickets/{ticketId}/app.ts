@@ -1,11 +1,18 @@
 import type { AuthNEnv } from '@bff/types'
 import { zValidator } from '@hono/zod-validator'
+import type { Ticket } from '@stack-example/grpc'
 import { createFactory } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { ResultAsync, err, ok } from 'neverthrow'
 import { z } from 'zod'
 
-const ticketDetailFactory = createFactory<AuthNEnv>()
+const ticketDetailFactory = createFactory<
+  AuthNEnv & {
+    Variables: {
+      ticket: Ticket
+    }
+  }
+>()
 
 const ticketDetailApp = ticketDetailFactory.createApp()
 
@@ -23,7 +30,7 @@ const ticketDetailParamValidator = ticketDetailFactory.createMiddleware(
         }),
       )().andThen((res) =>
         res.ticket?.createdBy === c.var.activeUser.userId
-          ? ok({})
+          ? ok(res.ticket)
           : err(
               new HTTPException(403, {
                 message: 'User does not match',
@@ -33,6 +40,7 @@ const ticketDetailParamValidator = ticketDetailFactory.createMiddleware(
       if (res.isErr()) {
         throw res.error
       }
+      c.set('ticket', res.value)
     },
   ),
 )
